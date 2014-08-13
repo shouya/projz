@@ -1,0 +1,2613 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<!-- saved from url=(0076)http://nemesis.lonestar.org/computers/tandy/software/apps/m4/qd/opcodes.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<!--	8080/Z80  Instruction Set
+	Copyright 1985,1999,2002,2006,2009,2011,2012 Frank Durda IV, All Rights Reserved.
+	Mirroring in any form is expressly prohibited.  Contact this address
+	for use clearances: clearance at nemesis.lonestar.org
+	Comments and queries to this address: web_software_2012 at
+	nemesis.lonestar.org
+	Edit 1(2) 24-Jan-1999
+	Edit 1(3)  9-Apr-2002
+	Edit 1(4) 16-May-2006 Corrected a typo where IX was repeated.
+	Edit 1(5) 12-Jul-2009 Added missing load/store refresh reg opcodes.
+	Edit 1(6)  6-Apr-2011 Another missing Interrupt register opcode.
+	Edit 1(7) 10-Jun-2012 Typo in Z80 JM/JP M sequence
+-->
+<title>
+8080/Z80  Instruction  Set
+</title>
+<style type="text/css"></style></head><body bgcolor="#FFFFFF" text="#000000" link="#009900" vlink="#990000">
+<basefont size="3">
+<center>
+<h1>
+8080/Z80  Instruction  Set
+</h1>
+</center>
+
+<blockquote>
+<pre>[Copyright 1985,1999,2002,2006,2009,2011,2012 Frank Durda IV, All Rights Reserved.
+Mirroring of any material on this site in any form is expressly prohibited.
+The official web site for this material is:  http://nemesis.lonestar.org
+Contact this address for use clearances: clearance at nemesis.lonestar.org
+Comments and queries to this address: web_software_2012 at nemesis.lonestar.org]
+</pre>
+</blockquote>
+
+
+
+
+
+<table>
+
+<tbody><tr>
+<th colspan="6" align="left">
+<big>8  Bit  Transfer  Instructions</big>
+</th>
+</tr>
+
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>MOV</td>	<td>A,A</td>	<td>LD</td>	<td>A,A</td>	<td>7F</td>	<td>A &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,B</td>	<td>LD</td>	<td>A,B</td>	<td>78</td>	<td>A &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,C</td>	<td>LD</td>	<td>A,C</td>	<td>79</td>	<td>A &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,D</td>	<td>LD</td>	<td>A,D</td>	<td>7A</td>	<td>A &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,E</td>	<td>LD</td>	<td>A,E</td>	<td>7B</td>	<td>A &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,H</td>	<td>LD</td>	<td>A,H</td>	<td>7C</td>	<td>A &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,L</td>	<td>LD</td>	<td>A,L</td>	<td>7D</td>	<td>A &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>A,M</td>	<td>LD</td>	<td>A,(HL)</td>	<td>7E</td>	<td>A &lt;- (HL)
+</td></tr>
+<tr>
+<td>LDAX</td>	<td>B</td>	<td>LD</td>	<td>A,(BC)</td>	<td>0A</td>	<td>A &lt;- (BC)
+</td></tr>
+<tr>
+<td>LDAX</td>	<td>D</td>	<td>LD</td>	<td>A,(DE)</td>	<td>1A</td>	<td>A &lt;- (DE)
+</td></tr>
+<tr>
+<td>LDA</td>	<td><tt><strong>word</strong></tt></td>	<td>LD</td>	<td>A,(<tt><strong>word</strong></tt>)</td>	<td>3A<tt><strong>word</strong></tt></td>	<td>A &lt;- (<tt><strong>word</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td>	</td><td>LD</td>	<td>A,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD7E<tt><strong>index</strong></tt></td>	<td>A &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td>	</td><td>LD</td>	<td>A,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD7E<tt><strong>index</strong></tt></td>	<td>A &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+
+
+<tr>
+<td>MOV</td>	<td>B,A</td>	<td>LD</td>	<td>B,A</td>	<td>47</td>	<td>B &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,B</td>	<td>LD</td>	<td>B,B</td>	<td>40</td>	<td>B &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,C</td>	<td>LD</td>	<td>B,C</td>	<td>41</td>	<td>B &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,D</td>	<td>LD</td>	<td>B,D</td>	<td>42</td>	<td>B &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,E</td>	<td>LD</td>	<td>B,E</td>	<td>43</td>	<td>B &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,H</td>	<td>LD</td>	<td>B,H</td>	<td>44</td>	<td>B &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,L</td>	<td>LD</td>	<td>B,L</td>	<td>45</td>	<td>B &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>B,M</td>	<td>LD</td>	<td>B,(HL)</td>	<td>46</td>	<td>B &lt;- (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>B,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD46<tt><strong>index</strong></tt></td>	<td>B &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>B,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD46<tt><strong>index</strong></tt></td>	<td>B &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+
+<td>MOV</td>	<td>C,A</td>	<td>LD</td>	<td>C,A</td>	<td>4F</td>	<td>C &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,B</td>	<td>LD</td>	<td>C,B</td>	<td>48</td>	<td>C &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,C</td>	<td>LD</td>	<td>C,C</td>	<td>49</td>	<td>C &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,D</td>	<td>LD</td>	<td>C,D</td>	<td>4A</td>	<td>C &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,E</td>	<td>LD</td>	<td>C,E</td>	<td>4B</td>	<td>C &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,H</td>	<td>LD</td>	<td>C,H</td>	<td>4C</td>	<td>C &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,L</td>	<td>LD</td>	<td>C,L</td>	<td>4D</td>	<td>C &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>C,M</td>	<td>LD</td>	<td>C,(HL)</td>	<td>4E</td>	<td>C &lt;- (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>C,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD4E<tt><strong>index</strong></tt></td>	<td>C &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>C,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD4E<tt><strong>index</strong></tt></td>	<td>C &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+
+<td>MOV</td>	<td>D,A</td>	<td>LD</td>	<td>D,A</td>	<td>57</td>	<td>D &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,B</td>	<td>LD</td>	<td>D,B</td>	<td>50</td>	<td>D &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,C</td>	<td>LD</td>	<td>D,C</td>	<td>51</td>	<td>D &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,D</td>	<td>LD</td>	<td>D,D</td>	<td>52</td>	<td>D &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,E</td>	<td>LD</td>	<td>D,E</td>	<td>53</td>	<td>D &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,H</td>	<td>LD</td>	<td>D,H</td>	<td>54</td>	<td>D &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,L</td>	<td>LD</td>	<td>D,L</td>	<td>55</td>	<td>D &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>D,M</td>	<td>LD</td>	<td>D,(HL)</td>	<td>56</td>	<td>D &lt;- (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>D,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD56<tt><strong>index</strong></tt></td>	<td>D &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>D,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD56<tt><strong>index</strong></tt></td>	<td>D &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+
+<tr>
+<td>MOV</td>	<td>E,A</td>	<td>LD</td>	<td>E,A</td>	<td>5F</td>	<td>E &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,B</td>	<td>LD</td>	<td>E,B</td>	<td>58</td>	<td>E &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,C</td>	<td>LD</td>	<td>E,C</td>	<td>59</td>	<td>E &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,D</td>	<td>LD</td>	<td>E,D</td>	<td>5A</td>	<td>E &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,E</td>	<td>LD</td>	<td>E,E</td>	<td>5B</td>	<td>E &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,H</td>	<td>LD</td>	<td>E,H</td>	<td>5C</td>	<td>E &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,L</td>	<td>LD</td>	<td>E,L</td>	<td>5D</td>	<td>E &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>E,M</td>	<td>LD</td>	<td>E,(HL)</td>	<td>5E</td>	<td>E &lt;- (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>E,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD5E<tt><strong>index</strong></tt></td>	<td>E &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>E,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD5E<tt><strong>index</strong></tt></td>	<td>E &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,A</td>	<td>LD</td>	<td>H,A</td>	<td>67</td>	<td>H &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,B</td>	<td>LD</td>	<td>H,B</td>	<td>60</td>	<td>H &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,C</td>	<td>LD</td>	<td>H,C</td>	<td>61</td>	<td>H &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,D</td>	<td>LD</td>	<td>H,D</td>	<td>62</td>	<td>H &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,E</td>	<td>LD</td>	<td>H,E</td>	<td>63</td>	<td>H &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,H</td>	<td>LD</td>	<td>H,H</td>	<td>64</td>	<td>H &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,L</td>	<td>LD</td>	<td>H,L</td>	<td>65</td>	<td>H &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>H,M</td>	<td>LD</td>	<td>H,(HL)</td>	<td>66</td>	<td>H &lt;- (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>H,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD66<tt><strong>index</strong></tt></td>	<td>H &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>H,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD66<tt><strong>index</strong></tt></td>	<td>H &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,A</td>	<td>LD</td>	<td>L,A</td>	<td>6F</td>	<td>L &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,B</td>	<td>LD</td>	<td>L,B</td>	<td>68</td>	<td>L &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,C</td>	<td>LD</td>	<td>L,C</td>	<td>69</td>	<td>L &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,D</td>	<td>LD</td>	<td>L,D</td>	<td>6A</td>	<td>L &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,E</td>	<td>LD</td>	<td>L,E</td>	<td>6B</td>	<td>L &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,H</td>	<td>LD</td>	<td>L,H</td>	<td>6C</td>	<td>L &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,L</td>	<td>LD</td>	<td>L,L</td>	<td>6D</td>	<td>L &lt;- L
+</td></tr>
+<tr>
+<td>MOV</td>	<td>L,M</td>	<td>LD</td>	<td>L,(HL)</td>	<td>6E</td>	<td>L &lt;- (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>L,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD6E<tt><strong>index</strong></tt></td>	<td>L &lt;- (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>L,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD6E<tt><strong>index</strong></tt></td>	<td>L &lt;- (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,A</td>	<td>LD</td>	<td>(HL),A</td>	<td>77</td>		<td>(HL) &lt;- A
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,B</td>	<td>LD</td>	<td>(HL),B</td>	<td>70</td>		<td>(HL) &lt;- B
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,C</td>	<td>LD</td>	<td>(HL),C</td>	<td>71</td>		<td>(HL) &lt;- C
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,D</td>	<td>LD</td>	<td>(HL),D</td>	<td>72</td>		<td>(HL) &lt;- D
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,E</td>	<td>LD</td>	<td>(HL),E</td>	<td>73</td>		<td>(HL) &lt;- E
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,H</td>	<td>LD</td>	<td>(HL),H</td>	<td>74</td>		<td>(HL) &lt;- H
+</td></tr>
+<tr>
+<td>MOV</td>	<td>M,L</td>	<td>LD</td>	<td>(HL),L</td>	<td>75</td>		<td>(HL) &lt;- L
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),A</td>	<td>DD77<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- A
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),B</td>	<td>DD70<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- B
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),C</td>	<td>DD71<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- C
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),D</td>	<td>DD72<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- D
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),E</td>	<td>DD73<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- E
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),H</td>	<td>DD74<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- H
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),L</td>	<td>DD75<tt><strong>index</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- L
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),<tt><strong>byte</strong></tt></td>	<td>DD76<tt><strong>index</strong></tt><tt><strong>byte</strong></tt></td>	<td>(IX+<tt><strong>index</strong></tt>) &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),A</td>	<td>FD77<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- A
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),B</td>	<td>FD70<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- B
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),C</td>	<td>FD71<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- C
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),D</td>	<td>FD72<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- D
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),E</td>	<td>FD73<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- E
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),H</td>	<td>FD74<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- H
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),L</td>	<td>FD75<tt><strong>index</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- L
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),<tt><strong>byte</strong></tt></td>	<td>FD76<tt><strong>index</strong></tt><tt><strong>byte</strong></tt></td>	<td>(IY+<tt><strong>index</strong></tt>) &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>A,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>A,<tt><strong>byte</strong></tt></td>	<td>3E<tt><strong>byte</strong></tt></td>	<td>A &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>B,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>B,<tt><strong>byte</strong></tt></td>	<td>06<tt><strong>byte</strong></tt></td>	<td>B &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>C,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>C,<tt><strong>byte</strong></tt></td>	<td>0E<tt><strong>byte</strong></tt></td>	<td>C &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>D,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>D,<tt><strong>byte</strong></tt></td>	<td>16<tt><strong>byte</strong></tt></td>	<td>D &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>E,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>E,<tt><strong>byte</strong></tt></td>	<td>1E<tt><strong>byte</strong></tt></td>	<td>E &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>H,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>H,<tt><strong>byte</strong></tt></td>	<td>26<tt><strong>byte</strong></tt></td>	<td>H &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>L,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>L,<tt><strong>byte</strong></tt></td>	<td>2E<tt><strong>byte</strong></tt></td>	<td>L &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>MVI</td>	<td>M,<tt><strong>byte</strong></tt></td>	<td>LD</td>	<td>(HL),<tt><strong>byte</strong></tt></td>	<td>36<tt><strong>byte</strong></tt></td>	<td>     (HL) &lt;- <tt><strong>byte</strong></tt>
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IX+<tt><strong>index</strong></tt>),<tt><strong>byte</strong></tt></td>
+<td>DD36<tt><strong>index</strong></tt> <tt><strong>byte</strong></tt></td>
+<td>       (IX+<tt><strong>index</strong></tt>) &lt;- <tt><strong>byte</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(IY+<tt><strong>index</strong></tt>),<tt><strong>byte</strong></tt></td><td>FD36<tt><strong>index</strong></tt> <tt><strong>byte</strong></tt></td>
+<td>       (IY+<tt><strong>index</strong></tt>) &lt;- <tt><strong>byte</strong></tt></td>
+</tr>
+<tr>
+<td>STAX</td>	<td>B</td>	<td>LD</td>	<td>(BC),A</td>	<td>02</td>	<td>     (BC) &lt;- A
+</td></tr>
+<tr>
+<td>STAX</td>	<td>D</td>	<td>LD</td>	<td>(DE),A</td>	<td>12</td>	<td>     (DE) &lt;- A
+</td></tr>
+<tr>
+<td>STA</td>	<td><tt><strong>word</strong></tt></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),A</td>	<td>32<tt><strong>word</strong></tt></td>	<td>   (<tt><strong>word</strong></tt>) &lt;- A
+</td></tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>16  Bit  Transfer  Instructions</big>
+</th>
+</tr>
+
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>LXI</td>	<td>B,<tt><strong>word</strong></tt></td>	<td>LD</td>	<td>BC,<tt><strong>word</strong></tt></td>	<td>01<tt><strong>word</strong></tt></td>	<td>BC &lt;- <tt><strong>word</strong></tt></td>
+</tr>
+<tr>
+<td>LXI</td>	<td>D,<tt><strong>word</strong></tt></td>	<td>LD</td>	<td>DE,<tt><strong>word</strong></tt></td>	<td>11<tt><strong>word</strong></tt></td>	<td>DE &lt;- <tt><strong>word</strong></tt></td>
+</tr>
+<tr>
+<td>LXI</td>	<td>H,<tt><strong>word</strong></tt></td>	<td>LD</td>	<td>HL,<tt><strong>word</strong></tt></td>	<td>21<tt><strong>word</strong></tt></td>	<td>HL &lt;- <tt><strong>word</strong></tt></td>
+</tr>
+<tr>
+<td>LXI</td>	<td>SP,<tt><strong>word</strong></tt></td>	<td>LD</td>	<td>SP,<tt><strong>word</strong></tt></td>	<td>31<tt><strong>word</strong></tt></td>	<td>SP &lt;- <tt><strong>word</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>IX,<tt><strong>word</strong></tt></td>	<td>DD21<tt><strong>word</strong></tt></td>	<td>IX &lt;- <tt><strong>word</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>IY,<tt><strong>word</strong></tt></td>	<td>FD21<tt><strong>word</strong></tt></td>	<td>IY &lt;- <tt><strong>word</strong></tt></td>
+</tr>
+<tr>
+<td>LHLD</td>	<td><tt><strong>word</strong></tt></td>	<td>LD</td>	<td>HL,(<tt><strong>word</strong></tt>)</td>	<td>2A<tt><strong>word</strong></tt></td>	<td>HL &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>BC,(<tt><strong>word</strong></tt>)</td>	<td>ED4B<tt><strong>word</strong></tt></td>	<td>BC &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>DE,(<tt><strong>word</strong></tt>)</td>	<td>ED5B<tt><strong>word</strong></tt></td>	<td>DE &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>HL,(<tt><strong>word</strong></tt>)</td>	<td>ED6B<tt><strong>word</strong></tt></td>	<td>HL &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>SP,(<tt><strong>word</strong></tt>)</td>	<td>ED7B<tt><strong>word</strong></tt></td>	<td>SP &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>IX,(<tt><strong>word</strong></tt>)</td>	<td>DD2A<tt><strong>word</strong></tt></td>	<td>IX &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>IY,(<tt><strong>word</strong></tt>)</td>	<td>FD2A<tt><strong>word</strong></tt></td>	<td>IY &lt;- (<tt><strong>word</strong></tt>)</td>
+</tr>
+<tr>
+<td>SHLD</td>	<td><tt><strong>word</strong></tt></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),HL</td>	<td>22<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- HL</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),BC</td>	<td>ED43<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- BC</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),DE</td>	<td>ED53<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- DE</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),HL</td>	<td>ED6B<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- HL</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),IX</td>	<td>DD22<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- IX</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),IY</td>	<td>DD22<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- IY</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>(<tt><strong>word</strong></tt>),SP</td>	<td>ED73<tt><strong>word</strong></tt></td>	<td>(<tt><strong>word</strong></tt>) &lt;- SP</td>
+</tr>
+<tr>
+<td>SPHL</td><td></td>	<td>LD</td>	<td>SP,HL</td>	<td>F9</td>	<td>SP &lt;- HL</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>SP,IX</td>	<td>DDF9</td>	<td>SP &lt;- IX</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>SP,IY</td>	<td>FDF9</td>	<td>SP &lt;- IY</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Register Exchange Instructions</big>
+</th>
+</tr>
+
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+<tr>
+<td>XCHG</td><td></td>	<td>EX</td>	<td>DE,HL</td>	<td>EB</td>	<td>HL &lt;-&gt; DE
+</td></tr>
+<tr>
+<td>XTHL</td><td></td>	<td>EX</td>	<td>(SP),HL</td>	<td>E3</td>	<td>    H &lt;-&gt; (SP+1); L &lt;-&gt; (SP)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>EX</td>	<td>(SP),IX</td>	<td>DDE3</td>	<td> IXh &lt;-&gt; (SP+1); IXl &lt;-&gt; (SP)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>EX</td>	<td>(SP),IY</td>	<td>FDE3</td>	<td> IYh &lt;-&gt; (SP+1); IYl &lt;-&gt; (SP)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>EX</td>	<td>AF,AF'</td>	<td>08</td>	<td>AF &lt;-&gt; AF'
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>EXX</td><td></td>	<td>D9</td>	<td>BC/DE/HL &lt;-&gt; BC'/DE'/HL'
+</td></tr>
+
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Add Byte Instructions</big>
+</th>
+</tr>
+
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+<tr>
+<td>ADD</td>	<td>A</td>	<td>ADD</td>	<td>A,A</td>	<td>87</td>	<td>A &lt;- A + A
+</td></tr>
+<tr>
+<td>ADD</td>	<td>B</td>	<td>ADD</td>	<td>A,B</td>	<td>80</td>	<td>A &lt;- A + B
+</td></tr>
+<tr>
+<td>ADD</td>	<td>C</td>	<td>ADD</td>	<td>A,C</td>	<td>81</td>	<td>A &lt;- A + C
+</td></tr>
+<tr>
+<td>ADD</td>	<td>D</td>	<td>ADD</td>	<td>A,D</td>	<td>82</td>	<td>A &lt;- A + D
+</td></tr>
+<tr>
+<td>ADD</td>	<td>E</td>	<td>ADD</td>	<td>A,E</td>	<td>83</td>	<td>A &lt;- A + E
+</td></tr>
+<tr>
+<td>ADD</td>	<td>H</td>	<td>ADD</td>	<td>A,H</td>	<td>84</td>	<td>A &lt;- A + H
+</td></tr>
+<tr>
+<td>ADD</td>	<td>L</td>	<td>ADD</td>	<td>A,L</td>	<td>85</td>	<td>A &lt;- A + L
+</td></tr>
+<tr>
+<td>ADD</td>	<td>M</td>	<td>ADD</td>	<td>A,(HL)</td>	<td>86</td>	<td>A &lt;- A + (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>A,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD86<tt><strong>index</strong></tt></td><td>A &lt;- A + (IX+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>A,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD86<tt><strong>index</strong></tt></td><td>A &lt;- A + (IY+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>ADI</td>	<td><tt><strong>byte</strong></tt></td>	<td>ADD</td>	<td>A,<tt><strong>byte</strong></tt></td>	<td>C6<tt><strong>byte</strong></tt></td>	<td>A &lt;- A + <tt><strong>byte</strong></tt>
+</td></tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Add Byte with Carry-In Instructions</big>
+</th>
+</tr>
+
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+<tr>
+<td>ADC</td>	<td>A</td>	<td>ADC</td>	<td>A,A</td>	<td>8F</td>	<td>A &lt;- A + A + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>B</td>	<td>ADC</td>	<td>A,B</td>	<td>88</td>	<td>A &lt;- A + B + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>C</td>	<td>ADC</td>	<td>A,C</td>	<td>89</td>	<td>A &lt;- A + C + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>D</td>	<td>ADC</td>	<td>A,D</td>	<td>8A</td>	<td>A &lt;- A + D + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>E</td>	<td>ADC</td>	<td>A,E</td>	<td>8B</td>	<td>A &lt;- A + E + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>H</td>	<td>ADC</td>	<td>A,H</td>	<td>8C</td>	<td>A &lt;- A + H + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>L</td>	<td>ADC</td>	<td>A,L</td>	<td>8D</td>	<td>A &lt;- A + L + Carry
+</td></tr>
+<tr>
+<td>ADC</td>	<td>M</td>	<td>ADC</td>	<td>A,(HL)</td>	<td>8E</td>	<td>A &lt;- A + (HL) + Carry
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>ADC</td>	<td>A,(IX+<tt><strong>index</strong></tt>)</td>	<td>DD8E<tt><strong>index</strong></tt></td><td>A &lt;- A + (IX+<tt><strong>index</strong></tt>) + Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADC</td>	<td>A,(IY+<tt><strong>index</strong></tt>)</td>	<td>FD8E<tt><strong>index</strong></tt></td><td>A &lt;- A + (IY+<tt><strong>index</strong></tt>) + Carry</td>
+</tr>
+<tr>
+<td>ACI</td>	<td><tt><strong>byte</strong></tt></td>	<td>ADC</td>	<td>A,<tt><strong>byte</strong></tt></td>	<td>CE<tt><strong>byte</strong></tt></td>	<td>A &lt;- A + <tt><strong>byte</strong></tt> + Carry
+</td></tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Subtract Byte Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>SUB</td>	<td>A</td>	<td>SUB</td>	<td>A</td>	<td>97</td>	<td>A &lt;- A - A</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>B</td>	<td>SUB</td>	<td>B</td>	<td>90</td>	<td>A &lt;- A - B</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>C</td>	<td>SUB</td>	<td>C</td>	<td>91</td>	<td>A &lt;- A - C</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>D</td>	<td>SUB</td>	<td>D</td>	<td>92</td>	<td>A &lt;- A - D</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>E</td>	<td>SUB</td>	<td>E</td>	<td>93</td>	<td>A &lt;- A - E</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>H</td>	<td>SUB</td>	<td>H</td>	<td>94</td>	<td>A &lt;- A - H</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>L</td>	<td>SUB</td>	<td>L</td>	<td>95</td>	<td>A &lt;- A - L</td>
+</tr>
+<tr>
+<td>SUB</td>	<td>M</td>	<td>SUB</td>	<td>(HL)</td>	<td>96</td>	<td>A &lt;- A - (HL)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SUB</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DD96<tt><strong>index</strong></tt></td>	<td>A &lt;- A - (IX+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SUB</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FD96<tt><strong>index</strong></tt></td>	<td>A &lt;- A - (IY+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>SUI</td>	<td><tt><strong>byte</strong></tt></td>	<td>SUB</td>	<td><tt><strong>byte</strong></tt></td>	<td>D6<tt><strong>byte</strong></tt></td>	<td>A &lt;- A - <tt><strong>byte</strong></tt></td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Subtract Byte With Borrow-In Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>SBB</td>	<td>A</td>	<td>SBC</td>	<td>A</td>	<td>9F</td>	<td>A &lt;- A - A - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>B</td>	<td>SBC</td>	<td>B</td>	<td>98</td>	<td>A &lt;- A - B - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>C</td>	<td>SBC</td>	<td>C</td>	<td>99</td>	<td>A &lt;- A - C - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>D</td>	<td>SBC</td>	<td>D</td>	<td>9A</td>	<td>A &lt;- A - D - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>E</td>	<td>SBC</td>	<td>E</td>	<td>9B</td>	<td>A &lt;- A - E - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>H</td>	<td>SBC</td>	<td>H</td>	<td>9C</td>	<td>A &lt;- A - H - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>L</td>	<td>SBC</td>	<td>L</td>	<td>9D</td>	<td>A &lt;- A - L - Carry</td>
+</tr>
+<tr>
+<td>SBB</td>	<td>M</td>	<td>SBC</td>	<td>(HL)</td>	<td>9E</td>	<td>A &lt;- A - (HL) - Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SBC</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DD9E<tt><strong>index</strong></tt></td><td>A &lt;- A - (IX+<tt><strong>index</strong></tt>) - Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SBC</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FD9E<tt><strong>index</strong></tt></td><td>A &lt;- A - (IY+<tt><strong>index</strong></tt>) - Carry</td>
+</tr>
+<tr>
+<td>SBI</td>	<td><tt><strong>byte</strong></tt></td>	<td>SBC</td>	<td><tt><strong>byte</strong></tt></td>	<td>DE<tt><strong>byte</strong></tt></td>	<td>A &lt;- A - <tt><strong>byte</strong></tt> - Carry</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Double Byte Add Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>DAD</td>	<td>B</td>	<td>ADD</td>	<td>HL,BC</td>	<td>09</td>	<td>HL &lt;- HL + BC</td>
+</tr>
+<tr>
+<td>DAD</td>	<td>D</td>	<td>ADD</td>	<td>HL,DE</td>	<td>19</td>	<td>HL &lt;- HL + DE</td>
+</tr>
+<tr>
+<td>DAD</td>	<td>H</td>	<td>ADD</td>	<td>HL,HL</td>	<td>29</td>	<td>HL &lt;- HL + HL</td>
+</tr>
+<tr>
+<td>DAD</td>	<td>SP</td>	<td>ADD</td>	<td>HL,SP</td>	<td>39</td>	<td>HL &lt;- HL + SP</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IX,BC</td>	<td>DD09</td>	<td>IX &lt;- IX + BC</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IX,DE</td>	<td>DD19</td>	<td>IX &lt;- IX + DE</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IX,IX</td>	<td>DD29</td>	<td>IX &lt;- IX + IX</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IX,SP</td>	<td>DD39</td>	<td>IX &lt;- IX + SP</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IY,BC</td>	<td>FD09</td>	<td>IY &lt;- IY + BC</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IY,DE</td>	<td>FD19</td>	<td>IY &lt;- IY + DE</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IY,IY</td>	<td>FD29</td>	<td>IY &lt;- IY + IY</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADD</td>	<td>IY,SP</td>	<td>FD39</td>	<td>IY &lt;- IY + SP</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Double Byte Add With Carry-In Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>ADC</td>	<td>HL,BC</td>	<td>ED4A</td>	<td>HL &lt;- HL + BC + Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADC</td>	<td>HL,DE</td>	<td>ED5A</td>	<td>HL &lt;- HL + DE + Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADC</td>	<td>HL,HL</td>	<td>ED6A</td>	<td>HL &lt;- HL + HL + Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>ADC</td>	<td>HL,SP</td>	<td>ED7A</td>	<td>HL &lt;- HL + SP + Carry</td>
+</tr>
+
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Double Byte Subtract With Borrow-In Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+
+<tr>
+<td>---</td><td></td>	<td>SBC</td>	<td>HL,BC</td>	<td>ED42</td>	<td>HL &lt;- HL - BC - Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SBC</td>	<td>HL,DE</td>	<td>ED52</td>	<td>HL &lt;- HL - DE - Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SBC</td>	<td>HL,HL</td>	<td>ED62</td>	<td>HL &lt;- HL - HL - Carry</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SBC</td>	<td>HL,SP</td>	<td>ED72</td>	<td>HL &lt;- HL - SP - Carry</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Control Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+
+<tr>
+<td>DI</td><td></td>	<td>DI</td><td></td>	<td>F3</td>	<td>IFF &lt;- 0</td>
+</tr>
+<tr>
+<td>EI</td><td></td>	<td>EI</td><td></td>	<td>FB</td>	<td>IFF &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IM</td>	<td>0</td>	<td>ED46</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IM</td>	<td>1</td>	<td>ED56</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IM</td>	<td>2</td>	<td>ED5E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td>	</td><td>LD</td>	<td>A,I</td>	<td>ED57</td>	<td>A &lt;- Interrupt Page
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>LD</td>	<td>I,A</td>	<td>ED47</td>	<td>Interrupt Page &lt;- A
+</td></tr>
+<tr>
+<td>---</td><td>	</td><td>LD</td>	<td>A,R</td>	<td>ED5F</td>	<td>A &lt;- Refresh Register
+</td></tr>
+<tr>
+<td>---</td><td>	</td><td>LD</td>	<td>R,A</td>	<td>ED4F</td>	<td>Refresh Register &lt;- A
+</td></tr>
+<tr>
+<td>NOP</td><td></td>	<td>NOP</td><td></td>	<td>00</td>	<td>No Operation</td>
+</tr>
+<tr>
+<td>HLT</td><td></td>	<td>HLT</td><td></td>	<td>76</td>	<td>NOP;PC &lt;- PC-1</td>
+</tr>
+
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Increment Byte Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>INR</td>	<td>A</td>	<td>INC</td>	<td>A</td>	<td>3C</td>	<td>A &lt;- A + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>B</td>	<td>INC</td>	<td>B</td>	<td>04</td>	<td>B &lt;- B + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>C</td>	<td>INC</td>	<td>C</td>	<td>0C</td>	<td>C &lt;- C + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>D</td>	<td>INC</td>	<td>D</td>	<td>14</td>	<td>D &lt;- D + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>E</td>	<td>INC</td>	<td>E</td>	<td>1C</td>	<td>E &lt;- E + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>H</td>	<td>INC</td>	<td>H</td>	<td>24</td>	<td>H &lt;- H + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>L</td>	<td>INC</td>	<td>L</td>	<td>2C</td>	<td>L &lt;- L + 1</td>
+</tr>
+<tr>
+<td>INR</td>	<td>M</td>	<td>INC</td>	<td>(HL)</td>	<td>34</td>	<td>(HL) &lt;- (HL) + 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INC</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DD34<tt><strong>index</strong></tt></td><td>(IX+<tt><strong>index</strong></tt>) &lt;- (IX+<tt><strong>index</strong></tt>) + 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INC</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FD34<tt><strong>index</strong></tt></td><td>(IY+<tt><strong>index</strong></tt>) &lt;- (IY+<tt><strong>index</strong></tt>) + 1</td>
+</tr>
+
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Decrement Byte Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+
+<tr>
+<td>DCR</td>	<td>A</td>	<td>DEC</td>	<td>A</td>	<td>3D</td>	<td>A &lt;- A - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>B</td>	<td>DEC</td>	<td>B</td>	<td>05</td>	<td>B &lt;- B - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>C</td>	<td>DEC</td>	<td>C</td>	<td>0D</td>	<td>C &lt;- C - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>D</td>	<td>DEC</td>	<td>D</td>	<td>15</td>	<td>D &lt;- D - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>E</td>	<td>DEC</td>	<td>E</td>	<td>1D</td>	<td>E &lt;- E - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>H</td>	<td>DEC</td>	<td>H</td>	<td>25</td>	<td>H &lt;- H - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>L</td>	<td>DEC</td>	<td>L</td>	<td>2D</td>	<td>L &lt;- L - 1</td>
+</tr>
+<tr>
+<td>DCR</td>	<td>M</td>	<td>DEC</td>	<td>(HL)</td>	<td>35</td>	<td>(HL) &lt;- (HL) - 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>DEC</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DD35<tt><strong>index</strong></tt></td><td>(IX+<tt><strong>index</strong></tt>) &lt;- (IX+<tt><strong>index</strong></tt>) - 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>DEC</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FD35<tt><strong>index</strong></tt></td><td>(IY+<tt><strong>index</strong></tt>) &lt;- (IY+<tt><strong>index</strong></tt>) - 1</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Increment Register Pair Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+
+
+<tr>
+<td>INX</td>	<td>B</td>	<td>INC</td>	<td>BC</td>	<td>03</td>	<td>BC &lt;- BC + 1</td>
+</tr>
+<tr>
+<td>INX</td>	<td>D</td>	<td>INC</td>	<td>DE</td>	<td>13</td>	<td>DE &lt;- DE + 1</td>
+</tr>
+<tr>
+<td>INX</td>	<td>H</td>	<td>INC</td>	<td>HL</td>	<td>23</td>	<td>HL &lt;- HL + 1</td>
+</tr>
+<tr>
+<td>INX</td>	<td>SP</td>	<td>INC</td>	<td>SP</td>	<td>33</td>	<td>SP &lt;- SP + 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INC</td>	<td>IX</td>	<td>DD23</td>	<td>IX &lt;- IX + 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INC</td>	<td>IY</td>	<td>FD23</td>	<td>IY &lt;- IY + 1</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Decrement Register Pair Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>DCX</td>	<td>B</td>	<td>DEC</td>	<td>BC</td>	<td>0B</td>	<td>BC &lt;- BC - 1</td>
+</tr>
+<tr>
+<td>DCX</td>	<td>D</td>	<td>DEC</td>	<td>DE</td>	<td>1B</td>	<td>DE &lt;- DE - 1</td>
+</tr>
+<tr>
+<td>DCX</td>	<td>H</td>	<td>DEC</td>	<td>HL</td>	<td>2B</td>	<td>HL &lt;- HL - 1</td>
+</tr>
+<tr>
+<td>DCX</td>	<td>SP</td>	<td>DEC</td>	<td>SP</td>	<td>3B</td>	<td>SP &lt;- SP - 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>DEC</td>	<td>IX</td>	<td>DD2B</td>	<td>IX &lt;- IX - 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>DEC</td>	<td>IY</td>	<td>FD2B</td>	<td>IY &lt;- IY - 1</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Special Accumulator and Flag Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>DAA</td><td></td>	<td>DAA</td><td></td>	<td>27</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>CMA</td><td></td>	<td>CPL</td><td></td>	<td>2F</td>	<td>A &lt;- NOT A</td>
+</tr>
+<tr>
+<td>STC</td><td></td>	<td>SCF</td><td></td>	<td>37</td>	<td>CF (Carry Flag) &lt;- 1</td>
+</tr>
+<tr>
+<td>CMC</td><td></td>	<td>CCF</td><td></td>	<td>3F</td>	<td>CF (Carry Flag) &lt;- NOT CF</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>NEG</td><td></td>	<td>ED44</td>	<td>A &lt;- 0-A</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Rotate Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>RLC</td><td></td>	<td>RLCA</td><td></td>	<td>07</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>RRC</td><td></td>	<td>RRCA</td><td></td>	<td>0F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>RAL</td><td></td>	<td>RLA</td><td></td>	<td>17</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>RAR</td><td></td>	<td>RRA</td><td></td>	<td>1F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLD</td><td></td>	<td>ED6F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRD</td><td></td>	<td>ED67</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>A</td>	<td>CB07</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>B</td>	<td>CB00</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>C</td>	<td>CB01</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>D</td>	<td>CB02</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>E</td>	<td>CB03</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>H</td>	<td>CB04</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>L</td>	<td>CB05</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>(HL)</td>	<td>CB06</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>06</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RLC</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>06</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>A</td>	<td>CB17</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>B</td>	<td>CB10</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>C</td>	<td>CB11</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>D</td>	<td>CB12</td>	<td>---</td><td></td>
+<td></td></tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>E</td>	<td>CB13</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>H</td>	<td>CB14</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>L</td>	<td>CB15</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>(HL)</td>	<td>CB16</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>16</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>16</td>	<td>---</td><td></td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>A</td>	<td>CB0F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>B</td>	<td>CB08</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>C</td>	<td>CB09</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>D</td>	<td>CB0A</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>E</td>	<td>CB0B</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>H</td>	<td>CB0C</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>L</td>	<td>CB0D</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>(HL)</td>	<td>CB0E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>0E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RRC</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>0E</td>	<td>---</td><td></td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>A</td>	<td>CB1F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>B</td>	<td>CB18</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>C</td>	<td>CB19</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>D</td>	<td>CB1A</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>E</td>	<td>CB1B</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>H</td>	<td>CB1C</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>L</td>	<td>CB1D</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>(HL)</td>	<td>CB1E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>1E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RL</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>1E</td>	<td>---</td><td></td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Logical Byte Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>ANA</td>	<td>A</td>	<td>AND</td>	<td>A</td>	<td>A7</td>	<td>A &lt;- A AND A
+</td></tr>
+<tr>
+<td>ANA</td>	<td>B</td>	<td>AND</td>	<td>B</td>	<td>A0</td>	<td>A &lt;- A AND B
+</td></tr>
+<tr>
+<td>ANA</td>	<td>C</td>	<td>AND</td>	<td>C</td>	<td>A1</td>	<td>A &lt;- A AND C
+</td></tr>
+<tr>
+<td>ANA</td>	<td>D</td>	<td>AND</td>	<td>D</td>	<td>A2</td>	<td>A &lt;- A AND D
+</td></tr>
+<tr>
+<td>ANA</td>	<td>E</td>	<td>AND</td>	<td>E</td>	<td>A3</td>	<td>A &lt;- A AND E
+</td></tr>
+<tr>
+<td>ANA</td>	<td>H</td>	<td>AND</td>	<td>H</td>	<td>A4</td>	<td>A &lt;- A AND H
+</td></tr>
+<tr>
+<td>ANA</td>	<td>L</td>	<td>AND</td>	<td>L</td>	<td>A5</td>	<td>A &lt;- A AND L
+</td></tr>
+<tr>
+<td>ANA</td>	<td>M</td>	<td>AND</td>	<td>(HL)</td>	<td>A6</td>	<td>A &lt;- A AND (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>AND</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDA6<tt><strong>index</strong></tt></td>	<td>A &lt;- A AND (IX+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>AND</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDA6<tt><strong>index</strong></tt></td>	<td>A &lt;- A AND (IY+<tt><strong>index</strong></tt>)
+</td></tr>
+<tr>
+<td>ANI</td>	<td><tt><strong>byte</strong></tt></td>	<td>AND</td>	<td><tt><strong>byte</strong></tt></td>	<td>E6<tt><strong>byte</strong></tt></td>	<td>A &lt;- A AND <tt><strong>byte</strong></tt>
+</td></tr>
+
+<tr>
+<td>XRA</td>	<td>A</td>	<td>XOR</td>	<td>A</td>	<td>AF</td>	<td>A &lt;- A XOR A
+</td></tr>
+<tr>
+<td>XRA</td>	<td>B</td>	<td>XOR</td>	<td>B</td>	<td>A8</td>	<td>A &lt;- A XOR B
+</td></tr>
+<tr>
+<td>XRA</td>	<td>C</td>	<td>XOR</td>	<td>C</td>	<td>A9</td>	<td>A &lt;- A XOR C
+</td></tr>
+<tr>
+<td>XRA</td>	<td>D</td>	<td>XOR</td>	<td>D</td>	<td>AA</td>	<td>A &lt;- A XOR D
+</td></tr>
+<tr>
+<td>XRA</td>	<td>E</td>	<td>XOR</td>	<td>E</td>	<td>AB</td>	<td>A &lt;- A XOR E
+</td></tr>
+<tr>
+<td>XRA</td>	<td>H</td>	<td>XOR</td>	<td>H</td>	<td>AC</td>	<td>A &lt;- A XOR H
+</td></tr>
+<tr>
+<td>XRA</td>	<td>L</td>	<td>XOR</td>	<td>L</td>	<td>AD</td>	<td>A &lt;- A XOR L
+</td></tr>
+<tr>
+<td>XRA</td>	<td>M</td>	<td>XOR</td>	<td>(HL)</td>	<td>AE</td>	<td>A &lt;- A XOR (HL)
+</td></tr>
+<tr>
+<td>---</td><td></td>	<td>XOR</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDAE<tt><strong>index</strong></tt></td>	<td>A &lt;- A XOR (IX+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>XOR</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDAE<tt><strong>index</strong></tt></td>	<td>A &lt;- A XOR (IY+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>XRI</td>	<td><tt><strong>byte</strong></tt></td>	<td>XOR</td>	<td><tt><strong>byte</strong></tt></td>	<td>EE<tt><strong>byte</strong></tt></td>	<td>A &lt;- A XOR <tt><strong>byte</strong></tt></td>
+</tr>
+
+<tr>
+<td>ORA</td>	<td>A</td>	<td>OR</td>	<td>A</td>	<td>B7</td>	<td>A &lt;- A OR A</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>B</td>	<td>OR</td>	<td>B</td>	<td>B0</td>	<td>A &lt;- A OR B</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>C</td>	<td>OR</td>	<td>C</td>	<td>B1</td>	<td>A &lt;- A OR C</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>D</td>	<td>OR</td>	<td>D</td>	<td>B2</td>	<td>A &lt;- A OR D</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>E</td>	<td>OR</td>	<td>E</td>	<td>B3</td>	<td>A &lt;- A OR E</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>H</td>	<td>OR</td>	<td>H</td>	<td>B4</td>	<td>A &lt;- A OR H</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>L</td>	<td>OR</td>	<td>L</td>	<td>B5</td>	<td>A &lt;- A OR L</td>
+</tr>
+<tr>
+<td>ORA</td>	<td>M</td>	<td>OR</td>	<td>(HL)</td>	<td>B6</td>	<td>A &lt;- A OR (HL)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OR</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDB6<tt><strong>index</strong></tt></td>	<td>A &lt;- A OR (IX+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OR</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDB6<tt><strong>index</strong></tt></td>	<td>A &lt;- A OR (IY+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>ORI</td>	<td><tt><strong>byte</strong></tt></td>	<td>OR</td>	<td><tt><strong>byte</strong></tt></td>	<td>F6<tt><strong>byte</strong></tt></td>	<td>A &lt;- A OR <tt><strong>byte</strong></tt></td>
+</tr>
+
+<tr>
+<td>CMP</td>	<td>A</td>	<td>CP</td>	<td>A</td>	<td>BF</td>	<td>A - A</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>B</td>	<td>CP</td>	<td>B</td>	<td>B8</td>	<td>A - B</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>C</td>	<td>CP</td>	<td>C</td>	<td>B9</td>	<td>A - C</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>D</td>	<td>CP</td>	<td>D</td>	<td>BA</td>	<td>A - D</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>E</td>	<td>CP</td>	<td>E</td>	<td>BB</td>	<td>A - E</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>H</td>	<td>CP</td>	<td>H</td>	<td>BC</td>	<td>A - H</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>L</td>	<td>CP</td>	<td>L</td>	<td>BD</td>	<td>A - L</td>
+</tr>
+<tr>
+<td>CMP</td>	<td>M</td>	<td>CP</td>	<td>(HL)</td>	<td>BE</td>	<td>A - (HL)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>CP</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDBE<tt><strong>index</strong></tt></td>	<td>A - (IX+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>CP</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDBE<tt><strong>index</strong></tt></td>	<td>A - (IY+<tt><strong>index</strong></tt>)</td>
+</tr>
+<tr>
+<td>CPI</td>	<td><tt><strong>byte</strong></tt></td>	<td>CP</td>	<td><tt><strong>byte</strong></tt></td>	<td>FE<tt><strong>byte</strong></tt></td>	<td>A - <tt><strong>byte</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>CPI</td><td></td>	<td>EDA1</td>	<td>A - (HL);HL &lt;- HL+1;BC &lt;- BC-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>CPIR</td><td></td>	<td>EDB1</td>	<td>A - (HL);HL &lt;- HL+1;BC &lt;- BC-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>CPD</td><td></td>	<td>EDA9</td>	<td>A - (HL);HL &lt;- HL-1;BC &lt;- BC-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>CPDR</td><td></td>	<td>EDB9</td>	<td>A - (HL);HL &lt;- HL-1;BC &lt;- BC-1</td>
+</tr>
+
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Branch Control/Program Counter Load Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>JMP</td>	<td>address</td>	<td>JP</td>	<td>address</td>	<td>C3address</td>	<td>PC &lt;- address</td>
+</tr>
+<tr>
+<td>JNZ</td>	<td>address</td>	<td>JP</td>	<td>NZ,address</td>	<td>C2address   </td>	<td>If NZ, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JZ</td>	<td>address</td>	<td>JP</td>	<td>Z,address</td>	<td>CAaddress</td>	<td>If  Z, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JNC</td>	<td>address</td>	<td>JP</td>	<td>NC,address</td>	<td>D2address</td>	<td>If NC, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JC</td>	<td>address</td>	<td>JP</td>	<td>C,address</td>	<td>DAaddress</td>	<td>If  C, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JPO</td>	<td>address</td>	<td>JP</td>	<td>PO,address</td>	<td>E2address</td>	<td>If PO, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JPE</td>	<td>address</td>	<td>JP</td>	<td>PE,address</td>	<td>EAaddress</td>	<td>If PE, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JP</td>	<td>address</td>	<td>JP</td>	<td>P,address</td>	<td>F2address</td>	<td>If  P, PC &lt;- address</td>
+</tr>
+<tr>
+<td>JM</td>	<td>address</td>	<td>JP</td>	<td>M,address</td>	<td>FAaddress</td>	<td>If  M, PC &lt;- address</td>
+</tr>
+<tr>
+<td>PCHL</td><td></td>	<td>JP</td>	<td>(HL)</td>	<td>E9</td>	<td>PC &lt;- HL</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JP</td>	<td>(IX)</td>	<td>DDE9</td>	<td>PC &lt;- IX</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JP</td>	<td>(IY)</td>	<td>FDE9</td>	<td>PC &lt;- IY</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JR</td>	<td><tt><strong>index</strong></tt></td>	<td>18<tt><strong>index</strong></tt></td>	<td>PC &lt;- PC + <tt><strong>index</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JR</td>	<td>NZ,<tt><strong>index</strong></tt></td>	<td>20<tt><strong>index</strong></tt></td>	<td>      If NZ, PC &lt;- PC + <tt><strong>index</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JR</td>	<td>Z,<tt><strong>index</strong></tt></td>	<td>28<tt><strong>index</strong></tt></td>	<td>      If  Z, PC &lt;- PC + <tt><strong>index</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JR</td>	<td>NC,<tt><strong>index</strong></tt></td>	<td>30<tt><strong>index</strong></tt></td>	<td>      If NC, PC &lt;- PC + <tt><strong>index</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>JR</td>	<td>C,<tt><strong>index</strong></tt></td>	<td>38<tt><strong>index</strong></tt></td>	<td>      If  C, PC &lt;- PC + <tt><strong>index</strong></tt></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>DJNZ</td>	<td><tt><strong>index</strong></tt></td>	<td>10<tt><strong>index</strong></tt></td>	<td>    B &lt;- B - 1; while B &gt; 0, PC &lt;- PC + <tt><strong>index</strong></tt></td>
+</tr>
+
+<tr>
+<td>CALL</td>	<td>address</td>	<td>CALL</td>	<td>address</td>	<td>CDaddress</td><td>(SP-1) &lt;- PCh;(SP-2) &lt;- PCl; SP &lt;- SP - 2;PC &lt;- address</td>
+</tr>
+<tr>
+<td>CNZ</td>	<td>address</td>	<td>CALL</td>	<td>NZ,address</td>	<td>C4address</td>	<td>If NZ, CALL address</td>
+</tr>
+<tr>
+<td>CZ</td>	<td>address</td>	<td>CALL</td>	<td>Z,address</td>	<td>CCaddress</td>	<td>If  Z, CALL address</td>
+</tr>
+<tr>
+<td>CNC</td>	<td>address</td>	<td>CALL</td>	<td>NC,address</td>	<td>D4address</td>	<td>If NC, CALL address</td>
+</tr>
+<tr>
+<td>CC</td>	<td>address</td>	<td>CALL</td>	<td>C,address</td>	<td>DCaddress</td>	<td>If  C, CALL address</td>
+</tr>
+<tr>
+<td>CPO</td>	<td>address</td>	<td>CALL</td>	<td>PO,address</td>	<td>E4address</td>	<td>If PO, CALL address</td>
+</tr>
+<tr>
+<td>CPE</td>	<td>address</td>	<td>CALL</td>	<td>PE,address</td>	<td>ECaddress</td>	<td>If PE, CALL address</td>
+</tr>
+<tr>
+<td>CP</td>	<td>address</td>	<td>CALL</td>	<td>P,address</td>	<td>F4address</td>	<td>If  P, CALL address</td>
+</tr>
+<tr>
+<td>CM</td>	<td>address</td>	<td>CALL</td>	<td>M,address</td>	<td>FCaddress</td>	<td>If  M, CALL address</td>
+</tr>
+
+<tr>
+<td>RET</td><td></td>	<td>RET</td><td></td>	<td>C9</td>	<td>    PCl &lt;- (SP);PCh &lt;- (SP+1); SP &lt;- (SP+2)</td>
+</tr>
+<tr>
+<td>RNZ</td><td></td>	<td>RET</td>	<td>NZ</td>	<td>C0</td>	<td>If NZ, RET</td>
+</tr>
+<tr>
+<td>RZ</td><td></td>	<td>RET</td>	<td>Z</td>	<td>C8</td>	<td>If  Z, RET</td>
+</tr>
+<tr>
+<td>RNC</td><td></td>	<td>RET</td>	<td>NC</td>	<td>D0</td>	<td>If NC, RET</td>
+</tr>
+<tr>
+<td>RC</td><td></td>	<td>RET</td>	<td>C</td>	<td>D8</td>	<td>If  C, RET</td>
+</tr>
+<tr>
+<td>RPO</td><td></td>	<td>RET</td>	<td>PO</td>	<td>E0</td>	<td>If PO, RET</td>
+</tr>
+<tr>
+<td>RPE</td><td></td>	<td>RET</td>	<td>PE</td>	<td>E8</td>	<td>If PE, RET</td>
+</tr>
+<tr>
+<td>RP</td><td></td>	<td>RET</td>	<td>P</td>	<td>F0</td>	<td>If  P, RET</td>
+</tr>
+<tr>
+<td>RM</td><td></td>	<td>RET</td>	<td>M</td>	<td>F8</td>	<td>If  M, RET</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RETI</td><td></td>	<td>ED4D</td>	<td>Return from Interrupt</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RETN</td><td></td>	<td>ED45</td>	<td>IFF1 &lt;- IFF2;RETI</td>
+</tr>
+
+<tr>
+<td>RST</td>	<td>0</td>	<td>RST</td>	<td>0</td>	<td>C7</td>	<td>CALL 0</td>
+</tr>
+<tr>
+<td>RST</td>	<td>1</td>	<td>RST</td>	<td>8</td>	<td>CF</td>	<td>CALL 8</td>
+</tr>
+<tr>
+<td>RST</td>	<td>2</td>	<td>RST</td>	<td>10H</td>	<td>D7</td>	<td>CALL 10H</td>
+</tr>
+<tr>
+<td>RST</td>	<td>3</td>	<td>RST</td>	<td>18H</td>	<td>DF</td>	<td>CALL 18H</td>
+</tr>
+<tr>
+<td>RST</td>	<td>4</td>	<td>RST</td>	<td>20H</td>	<td>E7</td>	<td>CALL 20H</td>
+</tr>
+<tr>
+<td>RST</td>	<td>5</td>	<td>RST</td>	<td>28H</td>	<td>EF</td>	<td>CALL 28H</td>
+</tr>
+<tr>
+<td>RST</td>	<td>6</td>	<td>RST</td>	<td>30H</td>	<td>F7</td>	<td>CALL 30H</td>
+</tr>
+<tr>
+<td>RST</td>	<td>7</td>	<td>RST</td>	<td>38H</td>	<td>FF</td>	<td>CALL 38H</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Stack Operation Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>PUSH</td>	<td>B</td>	<td>PUSH</td>	<td>BC</td>	<td>C5</td>	<td>(SP-2) &lt;- C; (SP-1) &lt;- B; SP &lt;- SP - 2</td>
+</tr>
+<tr>
+<td>PUSH</td>	<td>D</td>	<td>PUSH</td>	<td>DE</td>	<td>D5</td>	<td>(SP-2) &lt;- E; (SP-1) &lt;- D; SP &lt;- SP - 2</td>
+</tr>
+<tr>
+<td>PUSH</td>	<td>H</td>	<td>PUSH</td>	<td>HL</td>	<td>E5</td>	<td>(SP-2) &lt;- L; (SP-1) &lt;- H; SP &lt;- SP - 2</td>
+</tr>
+<tr>
+<td>PUSH</td>	<td>PSW</td>	<td>PUSH</td>	<td>AF</td>	<td>F5</td>	<td>(SP-2) &lt;- Flags; (SP-1) &lt;- A; SP &lt;- SP - 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>PUSH</td>	<td>IX</td>	<td>DDE5</td>	<td>(SP-2) &lt;- IXl; (SP-1) &lt;- IXh; SP &lt;- SP - 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>PUSH</td>	<td>IY</td>	<td>FDE5</td>	<td>(SP-2) &lt;- IYl; (SP-1) &lt;- IYh; SP &lt;- SP - 2</td>
+</tr>
+
+<tr>
+<td>POP</td>	<td>B</td>	<td>POP</td>	<td>BC</td>	<td>C1</td>	<td>B &lt;- (SP+1); C &lt;- (SP); SP &lt;- SP + 2</td>
+</tr>
+<tr>
+<td>POP</td>	<td>D</td>	<td>POP</td>	<td>DE</td>	<td>D1</td>	<td>D &lt;- (SP+1); E &lt;- (SP); SP &lt;- SP + 2</td>
+</tr>
+<tr>
+<td>POP</td>	<td>H</td>	<td>POP</td>	<td>HL</td>	<td>E1</td>	<td>H &lt;- (SP+1); L &lt;- (SP); SP &lt;- SP + 2</td>
+</tr>
+<tr>
+<td>POP</td>	<td>PSW</td>	<td>POP</td>	<td>AF</td>	<td>F1</td>	<td>A &lt;- (SP+1); Flags &lt;- (SP); SP &lt;- SP + 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>POP</td>	<td>IX</td>	<td>DDE1</td>	<td>IXh &lt;- (SP+1); IXl &lt;- (SP); SP &lt;- (SP+2)</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>POP</td>	<td>IY</td>	<td>FDE1</td>	<td>IYh &lt;- (SP+1); IYl &lt;- (SP); SP &lt;= (SP+2)</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Input/Output Instructions</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>IN</td>	<td><tt><strong>byte</strong></tt></td>	<td>IN</td>	<td>A,(<tt><strong>byte</strong></tt>)</td>	<td>DB<tt><strong>byte</strong></tt></td>	<td>A &lt;- [<tt><strong>byte</strong></tt>]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>A,(C)</td>	<td>ED78</td>	<td>A &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>B,(C)</td>	<td>ED40</td>	<td>B &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>C,(C)</td>	<td>ED48</td>	<td>C &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>D,(C)</td>	<td>ED50</td>	<td>D &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>E,(C)</td>	<td>ED58</td>	<td>E &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>H,(C)</td>	<td>ED60</td>	<td>H &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IN</td>	<td>L,(C)</td>	<td>ED68</td>	<td>L &lt;- [C]</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INI</td><td></td>	<td>EDA2</td><td>  (HL) &lt;- [C];B &lt;- B-1;HL &lt;- HL+1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INIR</td><td></td>	<td>EDB2</td><td>  (HL) &lt;- [C];B &lt;- B-1;HL &lt;- HL+1; Repeat while B&gt;0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>IND</td><td></td>	<td>EDAA</td><td>  (HL) &lt;- [C];B &lt;- B-1;HL &lt;- HL-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>INDR</td><td></td>	<td>EDBA</td><td>  (HL) &lt;- [C];B &lt;- B-1;HL &lt;- HL-1; Repeat while B&gt;0</td>
+</tr>
+
+<tr>
+<td>OUT</td>	<td><tt><strong>byte</strong></tt></td>	<td>OUT</td>	<td>(<tt><strong>byte</strong></tt>),A</td>	<td>D320</td>	<td>[<tt><strong>byte</strong></tt>] &lt;- A</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),A</td>	<td>ED79</td>	<td>[C] &lt;- A</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),B</td>	<td>ED41</td>	<td>[C] &lt;- B</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),C</td>	<td>ED49</td>	<td>[C] &lt;- C</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),D</td>	<td>ED51</td>	<td>[C] &lt;- D</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),E</td>	<td>ED59</td>	<td>[C] &lt;- E</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),H</td>	<td>ED61</td>	<td>[C] &lt;- H</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUT</td>	<td>(C),L</td>	<td>ED69</td>	<td>[C] &lt;- L</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUTI</td><td></td>	<td>EDA3</td><td>  [C] &lt;- (HL);B &lt;- B-1;HL &lt;- HL+1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OTIR</td><td></td>	<td>EDB3</td><td>  [C] &lt;- (HL);B &lt;- B-1;HL &lt;- HL+1; Repeat while B&gt;0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OUTD</td><td></td>	<td>EDAB</td><td>  [C] &lt;- (HL);B &lt;- B-1;HL &lt;- HL-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>OTDR</td><td></td>	<td>EDBB</td><td>  [C] &lt;- (HL);B &lt;- B-1;HL &lt;- HL-1; Repeat while B&gt;0</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Data Transfer Instructions (Z80 Only)</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>LDI</td><td></td>	<td>EDA0</td>	<td>(DE) &lt;- (HL);HL &lt;- HL+1; DE &lt;- DE+1; BC &lt;- BC-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LDIR</td><td></td>	<td>EDB0</td>	<td>(DE) &lt;- (HL);HL &lt;- HL+1; DE &lt;- DE+1; BC &lt;- BC-1; repeat while BC&lt;&gt;-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LDD</td><td></td>	<td>EDA8</td>	<td>(DE) &lt;- (HL);HL &lt;- HL-1; DE &lt;- DE-1; BC &lt;- BC-1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>LDDR</td><td></td>	<td>EDB8</td>	<td>(DE) &lt;- (HL);HL &lt;- HL-1; DE &lt;- DE-1; BC &lt;- BC-1; repeat while BC&lt;&gt;-1</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Bit Manipulation Instructions (Z80 Only)</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,A</td>	<td>CB47</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,B</td>	<td>CB40</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,C</td>	<td>CB41</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,D</td>	<td>CB42</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,E</td>	<td>CB43</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,H</td>	<td>CB44</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,L</td>	<td>CB45</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,(HL)</td>	<td>CB46</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>46</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>0,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>46</td>	<td>Z flag &lt;- NOT Bit 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,A</td>	<td>CB4F</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,B</td>	<td>CB48</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,C</td>	<td>CB49</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,D</td>	<td>CB4A</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,E</td>	<td>CB4B</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,H</td>	<td>CB4C</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,L</td>	<td>CB4D</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,(HL)</td>	<td>CB4E</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>4E</td>	<td>Z flag &lt;- NOT Bit 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>1,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>4E</td>	<td>Z flag &lt;- NOT Bit 1</td>
+
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,A</td>	<td>CB57</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,B</td>	<td>CB50</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,C</td>	<td>CB51</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,D</td>	<td>CB52</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,E</td>	<td>CB53</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,H</td>	<td>CB54</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,L</td>	<td>CB55</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,(HL)</td>	<td>CB56</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>56</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>2,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>56</td>	<td>Z flag &lt;- NOT Bit 2</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,A</td>	<td>CB5F</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,B</td>	<td>CB58</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,C</td>	<td>CB59</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,D</td>	<td>CB5A</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,E</td>	<td>CB5B</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,H</td>	<td>CB5C</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,L</td>	<td>CB5D</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,(HL)</td>	<td>CB5E</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>5E</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>3,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>5E</td>	<td>Z flag &lt;- NOT Bit 3</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,A</td>	<td>CB67</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,B</td>	<td>CB60</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,C</td>	<td>CB61</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,D</td>	<td>CB62</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,E</td>	<td>CB63</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,H</td>	<td>CB64</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,L</td>	<td>CB65</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,(HL)</td>	<td>CB66</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>66</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>4,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>66</td>	<td>Z flag &lt;- NOT Bit 4</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,A</td>	<td>CB6F</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,B</td>	<td>CB68</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,C</td>	<td>CB69</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,D</td>	<td>CB6A</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,E</td>	<td>CB6B</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,H</td>	<td>CB6C</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,L</td>	<td>CB6D</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,(HL)</td>	<td>CB6E</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>6E</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>5,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>6E</td>	<td>Z flag &lt;- NOT Bit 5</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,A</td>	<td>CB77</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,B</td>	<td>CB70</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,C</td>	<td>CB71</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,D</td>	<td>CB72</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,E</td>	<td>CB73</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,H</td>	<td>CB74</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,L</td>	<td>CB75</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,(HL)</td>	<td>CB76</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>76</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>6,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>76</td>	<td>Z flag &lt;- NOT Bit 6</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,A</td>	<td>CB7F</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,B</td>	<td>CB78</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,C</td>	<td>CB79</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,D</td>	<td>CB7A</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,E</td>	<td>CB7B</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,H</td>	<td>CB7C</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,L</td>	<td>CB7D</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,(HL)</td>	<td>CB7E</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>7E</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>BIT</td>	<td>7,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>7E</td>	<td>Z flag &lt;- NOT Bit 7</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,A</td>	<td>CB87</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,B</td>	<td>CB80</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,C</td>	<td>CB81</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,D</td>	<td>CB82</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,E</td>	<td>CB83</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,H</td>	<td>CB84</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,L</td>	<td>CB85</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,(HL)</td>	<td>CB86</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>86</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>0,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>86</td>	<td>Bit 0 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,A</td>	<td>CB8F</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,B</td>	<td>CB88</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,C</td>	<td>CB89</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,D</td>	<td>CB8A</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,E</td>	<td>CB8B</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,H</td>	<td>CB8C</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,L</td>	<td>CB8D</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,(HL)</td>	<td>CB8E</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>8E</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>1,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>8E</td>	<td>Bit 1 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,A</td>	<td>CB97</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,B</td>	<td>CB90</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,C</td>	<td>CB91</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,D</td>	<td>CB92</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,E</td>	<td>CB93</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,H</td>	<td>CB94</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,L</td>	<td>CB95</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,(HL)</td>	<td>CB96</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>96</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>2,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>96</td>	<td>Bit 2 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,A</td>	<td>CB9F</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,B</td>	<td>CB98</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,C</td>	<td>CB99</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,D</td>	<td>CB9A</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,E</td>	<td>CB9B</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,H</td>	<td>CB9C</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,L</td>	<td>CB9D</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,(HL)</td>	<td>CB9E</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>9E</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>3,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>9E</td>	<td>Bit 3 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,A</td>	<td>CBA7</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,B</td>	<td>CBA0</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,C</td>	<td>CBA1</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,D</td>	<td>CBA2</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,E</td>	<td>CBA3</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,H</td>	<td>CBA4</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,L</td>	<td>CBA5</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,(HL)</td>	<td>CBA6</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>A6</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>4,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>A6</td>	<td>Bit 4 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,A</td>	<td>CBAF</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,B</td>	<td>CBA8</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,C</td>	<td>CBA9</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,D</td>	<td>CBAA</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,E</td>	<td>CBAB</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,H</td>	<td>CBAC</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,L</td>	<td>CBAD</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,(HL)</td>	<td>CBAE</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>AE</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>5,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>AE</td>	<td>Bit 5 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,A</td>	<td>CBB7</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,B</td>	<td>CBB0</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,C</td>	<td>CBB1</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,D</td>	<td>CBB2</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,E</td>	<td>CBB3</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,H</td>	<td>CBB4</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,L</td>	<td>CBB5</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,(HL)</td>	<td>CBB6</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>B6</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>6,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>B6</td>	<td>Bit 6 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,A</td>	<td>CBBF</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,B</td>	<td>CBB8</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,C</td>	<td>CBB9</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,D</td>	<td>CBBA</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,E</td>	<td>CBBB</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,H</td>	<td>CBBC</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,L</td>	<td>CBBD</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,(HL)</td>	<td>CBBE</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>BE</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>RES</td>	<td>7,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>BE</td>	<td>Bit 7 &lt;- 0</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,A</td>	<td>CBC7</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,B</td>	<td>CBC0</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,C</td>	<td>CBC1</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,D</td>	<td>CBC2</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,E</td>	<td>CBC3</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,H</td>	<td>CBC4</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,L</td>	<td>CBC5</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,(HL)</td>	<td>CBC6</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>C6</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>0,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>C6</td>	<td>Bit 0 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,A</td>	<td>CBCF</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,B</td>	<td>CBC8</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,C</td>	<td>CBC9</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,D</td>	<td>CBCA</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,E</td>	<td>CBCB</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,H</td>	<td>CBCC</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,L</td>	<td>CBCD</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,(HL)</td>	<td>CBCE</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>CE</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>1,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>CE</td>	<td>Bit 1 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,A</td>	<td>CBD7</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,B</td>	<td>CBD0</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,C</td>	<td>CBD1</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,D</td>	<td>CBD2</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,E</td>	<td>CBD3</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,H</td>	<td>CBD4</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,L</td>	<td>CBD5</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,(HL)</td>	<td>CBD6</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>D6</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>2,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>D6</td>	<td>Bit 2 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,A</td>	<td>CBDF</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,B</td>	<td>CBD8</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,C</td>	<td>CBD9</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,D</td>	<td>CBDA</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,E</td>	<td>CBDB</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,H</td>	<td>CBDC</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,L</td>	<td>CBDD</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,(HL)</td>	<td>CBDE</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>DE</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>3,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>DE</td>	<td>Bit 3 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,A</td>	<td>CBE7</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,B</td>	<td>CBE0</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,C</td>	<td>CBE1</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,D</td>	<td>CBE2</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,E</td>	<td>CBE3</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,H</td>	<td>CBE4</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,L</td>	<td>CBE5</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,(HL)</td>	<td>CBE6</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>E6</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>4,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>E6</td>	<td>Bit 4 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,A</td>	<td>CBEF</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,B</td>	<td>CBE8</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,C</td>	<td>CBE9</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,D</td>	<td>CBEA</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,E</td>	<td>CBEB</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,H</td>	<td>CBEC</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,L</td>	<td>CBED</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,(HL)</td>	<td>CBEE</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>EE</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>5,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>EE</td>	<td>Bit 5 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,A</td>	<td>CBF7</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,B</td>	<td>CBF0</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,C</td>	<td>CBF1</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,D</td>	<td>CBF2</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,E</td>	<td>CBF3</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,H</td>	<td>CBF4</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,L</td>	<td>CBF5</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,(HL)</td>	<td>CBF6</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>F6</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>6,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>F6</td>	<td>Bit 6 &lt;- 1</td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,A</td>	<td>CBFF</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,B</td>	<td>CBF8</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,C</td>	<td>CBF9</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,D</td>	<td>CBFA</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,E</td>	<td>CBFB</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,H</td>	<td>CBFC</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,L</td>	<td>CBFD</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,(HL)</td>	<td>CBFE</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>FE</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SET</td>	<td>7,(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>FE</td>	<td>Bit 7 &lt;- 1</td>
+</tr>
+
+<tr>
+<td colspan="6"><hr></td>
+</tr>
+<tr>
+<th colspan="6" align="left">
+<big>Bit Shift Instructions (Z80 Only)</big>
+</th>
+</tr>
+<tr align="left">
+<th colspan="2">8080 Mnemonic</th>
+<th colspan="2">Z80 Mnemonic</th>
+<th>Machine Code</th>
+<th>Operation</th>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>A</td>	<td>CB27</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>B</td>	<td>CB20</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>C</td>	<td>CB21</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>D</td>	<td>CB22</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>E</td>	<td>CB23</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>H</td>	<td>CB24</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>L</td>	<td>CB25</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>(HL)</td>	<td>CB26</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>26</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SLA</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>26</td>	<td>---</td><td></td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>A</td>	<td>CB2F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>B</td>	<td>CB28</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>C</td>	<td>CB29</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>D</td>	<td>CB2A</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>E</td>	<td>CB2B</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>H</td>	<td>CB2C</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>L</td>	<td>CB2D</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>(HL)</td>	<td>CB2E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>2E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRA</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>2E</td>	<td>---</td><td></td>
+</tr>
+
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>A</td>	<td>CB3F</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>B</td>	<td>CB38</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>C</td>	<td>CB39</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>D</td>	<td>CB3A</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>E</td>	<td>CB3B</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>H</td>	<td>CB3C</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>L</td>	<td>CB3D</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>(HL)</td>	<td>CB3E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>(IX+<tt><strong>index</strong></tt>)</td>	<td>DDCB<tt><strong>index</strong></tt>3E</td>	<td>---</td><td></td>
+</tr>
+<tr>
+<td>---</td><td></td>	<td>SRL</td>	<td>(IY+<tt><strong>index</strong></tt>)</td>	<td>FDCB<tt><strong>index</strong></tt>3E</td>	<td>---</td><td></td>
+</tr>
+</tbody></table>
+
+<p>
+<br>
+</p><hr>
+<h2>Related Topics</h2>
+<p>
+<a href="http://nemesis.lonestar.org/computers/tandy/software/apps/m4/qd/opcodes.txt">
+A flat-ASCII version of this 8080/Z80 Instruction Set table
+</a> (ASCII)
+
+</p><p>
+<a href="http://nemesis.lonestar.org/computers/tandy/software/apps/m4/qd/index.html">
+Return to The QD Assembler Index</a> (HTML)
+</p><p>
+
+</p><p>
+</p><blockquote>
+<pre>[Copyright 1985,1999,2002,2006,2009,2011,2012 Frank Durda IV, All Rights Reserved.
+Mirroring of any material on this site in any form is expressly prohibited.
+The official web site for this material is:  http://nemesis.lonestar.org
+Contact this address for use clearances: clearance at nemesis.lonestar.org
+Comments and queries to this address: web_software_2012 at nemesis.lonestar.org]
+</pre>
+</blockquote>
+<p>
+<a href="http://nemesis.lonestar.org/">Visit the nemesis.lonestar.org
+home page and index</a>
+
+</p><p>
+<img src="./8080 Z80 Instruction Set_files/vh401.gif" alt="Valid HTML 4.01!" height="31" width="88">
+
+
+
+
+</p><iframe frameborder="0" scrolling="no" style="border: 0px; display: none; background-color: transparent;"></iframe><div id="GOOGLE_INPUT_CHEXT_FLAG" style="display: none;" input="null" input_stat="{&quot;tlang&quot;:true,&quot;tsbc&quot;:true,&quot;pun&quot;:true,&quot;mk&quot;:false,&quot;ss&quot;:true}"></div></body></html>

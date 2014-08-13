@@ -142,12 +142,20 @@ parseALblOffset = do char '['
 
 
 parseAddr :: Parser Address
-parseAddr =  try do { char '['; h <- parseHex2; char ']'; return (AHex h) }
-         <|> try do { char '[';
+parseAddr =  try parseAHexAddr
+         <|> try parseALblAddr
+         <|> try parseAHexOffset
+         <|> try parseALblOffset
 
+
+
+{- instruction parsing begins -}
 
 parseInst :: String -> Parser ParseResult
-parseInst "MOV" =
+parseInst "MOV" =  (parseCommaPair B B >> Plain (BS.pack 0x40))
+               <|> (parse
+
+
 
 loadInst :: IO [String]
 loadInst = readFile "instructions.macro" >>= return . filter foo . unlines
