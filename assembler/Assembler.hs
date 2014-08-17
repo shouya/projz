@@ -133,8 +133,14 @@ parseInstParam =  (char 'A' >> return (Reg A))
 
 {- End of instruction list parsing procedures -}
 
+
+{- Assembler
+
+   Translate a list of operations (label or action) into byte codes.
+-}
+
 data AddrType = HexAddr LocalAddr
---              | HexOffset Word16 Integer
+--              | HexOffset LocalAddr Integer
               | LblOffset String Integer
 
 data Argument = RegA Register
@@ -218,3 +224,70 @@ assemble ops = foldl BS.append BS.empty $
         mapaddr a         = a
         curryOp f (Action i a) = f i a
         curryOp _ _ = undefined
+
+{- end of the assembling functions definition -}
+
+{- Parsing Assembly File -}
+
+data Parameter = Reg Register
+               | Addr
+               | Byte
+               | Word
+               | Parm Int
+
+data Argument = RegA Register
+              | AddrA AddrType
+              | ByteA Word8
+              | WordA Word16
+              | ParmA Int
+
+matchParamArg :: Parameter -> Argument -> Bool
+matchParamArg (Reg p) (RegA a)   = p == a
+matchParamArg (Parm p) (ParmA a) = p == a
+matchParamArg Addr (AddrA _)     = True
+matchParamArg Byte (ByteA _)     = True
+matchParamArg Word (WordA _)     = True
+
+
+matchParamsArgs :: [Parameter] -> [Argument] -> Bool
+matchParamsArgs [] [] = True
+matchParamsArgs ps as
+  | length ps /= length as = False
+  | otherwise              = let (p:ps') = ps
+                                 (a:as') = as
+                             in matchParamArg p a &&
+                                matchParamsArgs ps' as'
+
+findInstByNameArgs :: String -> [Instruction] -> Maybe Instruction
+findInstByNameArgs s = find (\Inst {_instName = n, _instParams = p} -> s == n && )
+
+
+parseSource :: String -> [Instruction] -> [Operation]
+parseSource str insttbl = concatMap parseline $ lines str
+  where parseline str = case parse (parseSourceLine insttbl) "" str of
+          Left x  -> error (show x)
+          Right x -> [x]
+
+parseSourceLine :: [Instruction] -> Parser [Operation]
+parseSourceLine insttbl =
+  do skipMany space
+     lbl <- many (parseSourceLbl <* skipMany space)
+     inst <- option [] (liftM (:[]) $ parseSourceInst insttbl)
+     skipMany space
+     parseSourceComment >> _
+     return $ lbl ++ inst
+
+parseSourceLbl :: Parser Operation
+parseSourceLbl = try $ do
+  text <- many1 $ (oneOf "._" <|> alphaNum)
+  char ':'
+  return $ Label text
+
+parseSourceInst :: [Instruction] -> Parser Operation
+parseSourceInst = try $ do
+  instName <- many letter
+  args     <- sepBy (char ',' >> many space) parseSourceArg
+
+
+
+{- end of assembly file parsing -}
