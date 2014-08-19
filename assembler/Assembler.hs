@@ -275,7 +275,7 @@ parseSourceLine insttbl =
      lbl <- many (parseSourceLbl <* skipMany space)
      inst <- option [] (liftM (:[]) $ parseSourceInst insttbl)
      skipMany space
-     parseSourceComment
+     optional parseSourceComment
      return $ lbl ++ inst
 
 parseLabelText :: Parser String
