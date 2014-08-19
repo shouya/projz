@@ -136,7 +136,7 @@ parseInstParam =  liftM Reg parseRegister
               <|> (string "word" >> return Word)
               <|> (string "address" >> return Addr)
               <|> (string "byte" >> return Byte)
-              <|> liftM (Parm . read) (many digit)
+              <|> liftM (Parm . read) (many1 digit)
 
 {- End of instruction list parsing procedures -}
 
@@ -289,7 +289,7 @@ parseSourceLbl = try $ do
 
 parseSourceInst :: [Instruction] -> Parser Operation
 parseSourceInst insttbl = try $ do
-  instName <- many letter
+  instName <- many1 letter
   let candArgList = map (\Inst {_instParams = p} -> p ) $
                     filterInstByName insttbl instName
   skipMany space
@@ -359,7 +359,7 @@ parseHex2 :: Parser Word16
 parseHex2 = liftM (read . ("0x"++)) (count 4 hexDigit)
 
 parseDec :: (Read a, Integral a) => Parser a
-parseDec = liftM read $ many digit
+parseDec = liftM read $ many1 digit
 
 
 {- end of assembly file parsing -}
