@@ -115,17 +115,7 @@ parseInstParams :: Parser [Parameter]
 parseInstParams = parseInstParam `sepBy` char ','
 
 parseInstParam :: Parser Parameter
-parseInstParam =  (char 'A' >> return (Reg A))
-              <|> (char 'B' >> return (Reg B))
-              <|> (char 'C' >> return (Reg C))
-              <|> (char 'D' >> return (Reg D))
-              <|> (char 'E' >> return (Reg E))
-              <|> (char 'H' >> return (Reg H))
-              <|> (char 'L' >> return (Reg L))
-              <|> (char 'M' >> return (Reg M))  -- M == [HL]
-              <|> (string "PSW" >> return (Reg PSW))
-              <|> (string "SP" >> return (Reg SP))
-              <|> (string "IP" >> return (Reg IP))
+parseInstParam =  liftM Reg parseRegister
               <|> (string "word" >> return Word)
               <|> (string "address" >> return Addr)
               <|> (string "byte" >> return Byte)
@@ -229,18 +219,6 @@ assemble ops = foldl BS.append BS.empty $
 
 {- Parsing Assembly File -}
 
-data Parameter = Reg Register
-               | Addr
-               | Byte
-               | Word
-               | Parm Int
-
-data Argument = RegA Register
-              | AddrA AddrType
-              | ByteA Word8
-              | WordA Word16
-              | ParmA Int
-
 matchParamArg :: Parameter -> Argument -> Bool
 matchParamArg (Reg p) (RegA a)   = p == a
 matchParamArg (Parm p) (ParmA a) = p == a
@@ -258,8 +236,14 @@ matchParamsArgs ps as
                              in matchParamArg p a &&
                                 matchParamsArgs ps' as'
 
-findInstByNameArgs :: String -> [Instruction] -> Maybe Instruction
-findInstByNameArgs s = find (\Inst {_instName = n, _instParams = p} -> s == n && )
+findInstByNameArgs :: String -> [Argument] -> [Instruction] -> Maybe Instruction
+findInstByNameArgs s a = find matchInst
+  where matchInst Inst {_instName = n, _instParams = p} =
+          (man toUpper s) == n && p `matchParamsArgs` a
+
+filterInstByNameArgs :: String -> [Instruction] -> Maybe Instruction
+filterInstByNameArgs s = find (\Inst {_instName = n} -> (map toUpper s) == n)
+
 
 
 parseSource :: String -> [Instruction] -> [Operation]
@@ -287,7 +271,44 @@ parseSourceInst :: [Instruction] -> Parser Operation
 parseSourceInst = try $ do
   instName <- many letter
   args     <- sepBy (char ',' >> many space) parseSourceArg
+  case findInstByNameArgs instName args of
+    Just inst -> return $ Action inst args
+    Nothing   -> error $ "instruction " ++ instName ++ " isn't found."
 
+
+parseRegister :: Parser Register
+parseRegister =  char 'A' >> return A
+             <|> char 'B' >> return B
+             <|> char 'C' >> return C
+             <|> char 'D' >> return D
+             <|> char 'E' >> return E
+             <|> char 'H' >> return H
+             <|> char 'L' >> return L
+             <|> char 'M' >> return M
+             <|> string "PSW" >> return PSW
+             <|> string "SP" >> return SP
+             <|> string "IP" >> return IP
+
+data Argument = RegA Register
+              | AddrA AddrType
+              | ByteA Word8
+              | WordA Word16
+              | ParmA Int
+
+data Register = A | B | C | D | E | H | L | M | PSW | SP | IP
+              deriving (Eq)
+
+parseHex :: Parser Word8
+parseHex = liftM (read . ("0x"++)) (count 2 hexDigit <* oneOf 'hH')
+
+parseHex :: Parser Word16
+parseHex = liftM (read . ("0x"++)) (count 4 hexDigit <* oneOf 'hH')
+
+
+parseSourceArg :: Parser Argument
+parseSourceArg =  liftM RegA parseRegister
+              <|> liftM ByteA parseHex
+              <|> liftM WordA parseHex
 
 
 {- end of assembly file parsing -}
