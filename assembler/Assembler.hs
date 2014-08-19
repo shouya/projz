@@ -7,16 +7,17 @@ A 8080 CPU assembler.
 -}
 
 -- import Data.Char (toUpper, toLower)
-import Data.List (intercalate)
+import Data.List (intercalate, find)
 import Data.Word
 import Data.Bits
+import Data.Char (toUpper)
 import qualified Data.Map as M
 
 
 import Text.Printf
 
 import Control.Monad (liftM)
--- import Control.Applicative ((*>), (<*))
+import Control.Applicative ((*>), (<*))
 
 import Text.ParserCombinators.Parsec
 import qualified Data.ByteString as BS
@@ -116,6 +117,19 @@ parseInstName = many1 upper
 
 parseInstParams :: Parser [Parameter]
 parseInstParams = parseInstParam `sepBy` char ','
+
+parseRegister :: Parser Register
+parseRegister =  (char 'A' >> return A)
+             <|> (char 'B' >> return B)
+             <|> (char 'C' >> return C)
+             <|> (char 'D' >> return D)
+             <|> (char 'E' >> return E)
+             <|> (char 'H' >> return H)
+             <|> (char 'L' >> return L)
+             <|> (char 'M' >> return M)
+             <|> (string "PSW" >> return PSW)
+             <|> (string "SP" >> return SP)
+             <|> (string "IP" >> return IP)
 
 parseInstParam :: Parser Parameter
 parseInstParam =  liftM Reg parseRegister
@@ -239,13 +253,13 @@ matchParamsArgs ps as
                              in matchParamArg p a &&
                                 matchParamsArgs ps' as'
 
-findInstByNameArgs :: String -> [Argument] -> [Instruction] -> Maybe Instruction
-findInstByNameArgs s a = find matchInst
+findInstByNameArgs :: [Instruction] -> String -> [Argument] -> Maybe Instruction
+findInstByNameArgs i s a = find matchInst i
   where matchInst Inst {_instName = n, _instParams = p} =
-          (man toUpper s) == n && p `matchParamsArgs` a
+          (map toUpper s) == n && p `matchParamsArgs` a
 
-filterInstByName :: String -> [Instruction] -> [Instruction]
-filterInstByName s = find (\Inst {_instName = n} -> (map toUpper s) == n)
+filterInstByName :: [Instruction] -> String -> [Instruction]
+filterInstByName i s = filter (\Inst {_instName = n} -> (map toUpper s) == n) i
 
 
 
@@ -253,7 +267,7 @@ parseSource :: [Instruction] -> String -> [Operation]
 parseSource insttbl str = concatMap parseline $ lines str
   where parseline str = case parse (parseSourceLine insttbl) "" str of
           Left x  -> error (show x)
-          Right x -> [x]
+          Right x -> x
 
 parseSourceLine :: [Instruction] -> Parser [Operation]
 parseSourceLine insttbl =
@@ -261,7 +275,7 @@ parseSourceLine insttbl =
      lbl <- many (parseSourceLbl <* skipMany space)
      inst <- option [] (liftM (:[]) $ parseSourceInst insttbl)
      skipMany space
-     parseSourceComment >> _
+     parseSourceComment
      return $ lbl ++ inst
 
 parseLabelText :: Parser String
@@ -277,16 +291,16 @@ parseSourceInst :: [Instruction] -> Parser Operation
 parseSourceInst insttbl = try $ do
   instName <- many letter
   let candArgList = map (\Inst {_instParams = p} -> p ) $
-                    filterInstByName instName insttbl
+                    filterInstByName insttbl instName
   skipMany space
   args <- choice $ map parseSourceArgs candArgList
-  case findInstByNameArgs instName args of
+  case findInstByNameArgs insttbl instName args of
     Just inst -> return $ Action inst args
     Nothing   -> error $ "instruction " ++ instName ++ " isn't found."
 
 parseSourceArgs :: [Parameter] -> Parser [Argument]
 parseSourceArgs [] = return []
-parseSourceArgs [p] = parseSourceArg p
+parseSourceArgs [p] = liftM (:[]) $ parseSourceArg p
 parseSourceArgs (p:ps) = do
   a <- parseSourceArg p
   skipMany space >> char ',' >> skipMany space
@@ -309,10 +323,10 @@ parseSourceArg (Reg IP) = string "IP" >> return (RegA IP)
 parseSourceArg Addr = parseSourceAddr
 parseSourceArg Byte = parseSourceByte
 parseSourceArg Word = parseSourceWord
-parseSourceArg Parm = parseSourceParm
+parseSourceArg (Parm i) = parseSourceParm i
 
 parseSourceAddr :: Parser Argument
-parseSourceAddr =  liftM (AddrA . HexAddr) (parseHex2 *> oneOf "hH")
+parseSourceAddr =  liftM (AddrA . HexAddr) (parseHex2 <* oneOf "hH")
                <|> parseSourceAddrOffset
 
 parseSourceAddrOffset :: Parser Argument
@@ -322,18 +336,21 @@ parseSourceAddrOffset = do
   char '+'
   skipMany space
   ofs <- parseDec
-  return $ AddA $ LblOffset lbl ofs
+  return $ AddrA $ LblOffset lbl ofs
 
 parseSourceByte :: Parser Argument
-parseSourceByte =  try $ liftM ByteA (parseHex *> oneOf "hH")
+parseSourceByte =  try $ liftM ByteA (parseHex <* oneOf "hH")
                <|> liftM ByteA parseDec
 
 parseSourceWord :: Parser Argument
-parseSourceWord =  try $ liftM WordA (parseHex2 *> oneOf "hH")
+parseSourceWord =  try $ liftM WordA (parseHex2 <* oneOf "hH")
                <|> liftM WordA parseDec
 
-parseSourceParm :: Parser Argument
-parseSourceParm = parseDec
+parseSourceParm :: Int -> Parser Argument
+parseSourceParm = liftM (ParmA . read) . string . show
+
+parseSourceComment :: Parser ()
+parseSourceComment = char ';' >> manyTill (anyChar) eof >> return ()
 
 parseHex :: Parser Word8
 parseHex = liftM (read . ("0x"++)) (count 2 hexDigit)
@@ -341,7 +358,7 @@ parseHex = liftM (read . ("0x"++)) (count 2 hexDigit)
 parseHex2 :: Parser Word16
 parseHex2 = liftM (read . ("0x"++)) (count 4 hexDigit)
 
-parseDec :: (Integral a) => Parser a
+parseDec :: (Read a, Integral a) => Parser a
 parseDec = liftM read $ many digit
 
 
@@ -355,7 +372,7 @@ assembleSource src = do
   return $ assemble ops
 
 pipeLine :: IO ()
-pipeLine = getContents >>= assembleSource >>= putString
+pipeLine = getContents >>= assembleSource >>= BS.putStr
 
 
 main :: IO ()
