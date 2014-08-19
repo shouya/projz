@@ -95,6 +95,9 @@ parseInstList = concatMap parseline . lines
           Left _  -> []  -- error 'parse failed'
           Right x -> [x]
 
+readInstList :: IO [Instruction]
+readInstList = liftM parseInstList $ readFile "instructions.macro"
+
 parseInstLine :: Parser Instruction
 parseInstLine = do code <- parseInstCode
                    _ <- space
@@ -241,13 +244,13 @@ findInstByNameArgs s a = find matchInst
   where matchInst Inst {_instName = n, _instParams = p} =
           (man toUpper s) == n && p `matchParamsArgs` a
 
-filterInstByNameArgs :: String -> [Instruction] -> Maybe Instruction
-filterInstByNameArgs s = find (\Inst {_instName = n} -> (map toUpper s) == n)
+filterInstByName :: String -> [Instruction] -> [Instruction]
+filterInstByName s = find (\Inst {_instName = n} -> (map toUpper s) == n)
 
 
 
-parseSource :: String -> [Instruction] -> [Operation]
-parseSource str insttbl = concatMap parseline $ lines str
+parseSource :: [Instruction] -> String -> [Operation]
+parseSource insttbl str = concatMap parseline $ lines str
   where parseline str = case parse (parseSourceLine insttbl) "" str of
           Left x  -> error (show x)
           Right x -> [x]
@@ -261,54 +264,99 @@ parseSourceLine insttbl =
      parseSourceComment >> _
      return $ lbl ++ inst
 
+parseLabelText :: Parser String
+parseLabelText = many1 $ (oneOf "._" <|> alphaNum)
+
 parseSourceLbl :: Parser Operation
 parseSourceLbl = try $ do
-  text <- many1 $ (oneOf "._" <|> alphaNum)
+  text <- parseLabelText
   char ':'
   return $ Label text
 
 parseSourceInst :: [Instruction] -> Parser Operation
-parseSourceInst = try $ do
+parseSourceInst insttbl = try $ do
   instName <- many letter
-  args     <- sepBy (char ',' >> many space) parseSourceArg
+  let candArgList = map (\Inst {_instParams = p} -> p ) $
+                    filterInstByName instName insttbl
+  skipMany space
+  args <- choice $ map parseSourceArgs candArgList
   case findInstByNameArgs instName args of
     Just inst -> return $ Action inst args
     Nothing   -> error $ "instruction " ++ instName ++ " isn't found."
 
+parseSourceArgs :: [Parameter] -> Parser [Argument]
+parseSourceArgs [] = return []
+parseSourceArgs [p] = parseSourceArg p
+parseSourceArgs (p:ps) = do
+  a <- parseSourceArg p
+  skipMany space >> char ',' >> skipMany space
+  as <- parseSourceArgs ps
+  return (a : as)
 
-parseRegister :: Parser Register
-parseRegister =  char 'A' >> return A
-             <|> char 'B' >> return B
-             <|> char 'C' >> return C
-             <|> char 'D' >> return D
-             <|> char 'E' >> return E
-             <|> char 'H' >> return H
-             <|> char 'L' >> return L
-             <|> char 'M' >> return M
-             <|> string "PSW" >> return PSW
-             <|> string "SP" >> return SP
-             <|> string "IP" >> return IP
+parseSourceArg :: Parameter -> Parser Argument
+parseSourceArg (Reg A) = char 'A' >> return (RegA A)
+parseSourceArg (Reg B) = char 'B' >> return (RegA B)
+parseSourceArg (Reg C) = char 'C' >> return (RegA C)
+parseSourceArg (Reg D) = char 'D' >> return (RegA D)
+parseSourceArg (Reg E) = char 'E' >> return (RegA E)
+parseSourceArg (Reg H) = char 'H' >> return (RegA H)
+parseSourceArg (Reg L) = char 'L' >> return (RegA L)
+parseSourceArg (Reg M) = char 'M' >> return (RegA M)
+parseSourceArg (Reg PSW) = string "PSW" >> return (RegA PSW)
+parseSourceArg (Reg SP) = string "SP" >> return (RegA SP)
+parseSourceArg (Reg IP) = string "IP" >> return (RegA IP)
 
-data Argument = RegA Register
-              | AddrA AddrType
-              | ByteA Word8
-              | WordA Word16
-              | ParmA Int
+parseSourceArg Addr = parseSourceAddr
+parseSourceArg Byte = parseSourceByte
+parseSourceArg Word = parseSourceWord
+parseSourceArg Parm = parseSourceParm
 
-data Register = A | B | C | D | E | H | L | M | PSW | SP | IP
-              deriving (Eq)
+parseSourceAddr :: Parser Argument
+parseSourceAddr =  liftM (AddrA . HexAddr) (parseHex2 *> oneOf "hH")
+               <|> parseSourceAddrOffset
+
+parseSourceAddrOffset :: Parser Argument
+parseSourceAddrOffset = do
+  lbl <- parseLabelText
+  skipMany space
+  char '+'
+  skipMany space
+  ofs <- parseDec
+  return $ AddA $ LblOffset lbl ofs
+
+parseSourceByte :: Parser Argument
+parseSourceByte =  try $ liftM ByteA (parseHex *> oneOf "hH")
+               <|> liftM ByteA parseDec
+
+parseSourceWord :: Parser Argument
+parseSourceWord =  try $ liftM WordA (parseHex2 *> oneOf "hH")
+               <|> liftM WordA parseDec
+
+parseSourceParm :: Parser Argument
+parseSourceParm = parseDec
 
 parseHex :: Parser Word8
-parseHex = liftM (read . ("0x"++)) (count 2 hexDigit <* oneOf 'hH')
+parseHex = liftM (read . ("0x"++)) (count 2 hexDigit)
 
-parseHex :: Parser Word16
-parseHex = liftM (read . ("0x"++)) (count 4 hexDigit <* oneOf 'hH')
+parseHex2 :: Parser Word16
+parseHex2 = liftM (read . ("0x"++)) (count 4 hexDigit)
 
-
-parseSourceArg :: Parser Argument
-parseSourceArg =  liftM RegA parseRegister
-              <|> liftM ByteA parseHex
-              <|> liftM WordA parseHex
+parseDec :: (Integral a) => Parser a
+parseDec = liftM read $ many digit
 
 
 {- end of assembly file parsing -}
+
+
+assembleSource :: String -> IO (BS.ByteString)
+assembleSource src = do
+  insttbl <- readInstList
+  let ops = parseSource insttbl src
+  return $ assemble ops
+
+pipeLine :: IO ()
+pipeLine = getContents >>= assembleSource >>= putString
+
+
+main :: IO ()
+main = pipeLine
