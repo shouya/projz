@@ -6,6 +6,8 @@ A 8080 CPU assembler.
 
 -}
 
+import Debug.Trace
+
 -- import Data.Char (toUpper, toLower)
 import Data.List (intercalate, find)
 import Data.Word
@@ -22,6 +24,9 @@ import Control.Applicative ((*>), (<*))
 import Text.ParserCombinators.Parsec
 import qualified Data.ByteString as BS
 
+
+{- for debug use -}
+miatrace a = trace (show a) a
 
 {- Instruction Specification List Parsing
 
@@ -149,15 +154,18 @@ parseInstParam =  liftM Reg parseRegister
 data AddrType = HexAddr LocalAddr
 --              | HexOffset LocalAddr Integer
               | LblOffset String Integer
+              deriving Show
 
 data Argument = RegA Register
               | AddrA AddrType
               | ByteA Word8
               | WordA Word16
               | ParmA Int
+              deriving Show
 
 data Operation = Label String
                | Action Instruction [Argument]
+               deriving Show
 
 type LabelTable = M.Map String LocalAddr
 
@@ -265,18 +273,24 @@ filterInstByName i s = filter (\Inst {_instName = n} -> (map toUpper s) == n) i
 
 parseSource :: [Instruction] -> String -> [Operation]
 parseSource insttbl str = concatMap parseline $ lines str
-  where parseline str = case parse (parseSourceLine insttbl) "" str of
+  where parseline str = case parse (   parseSourceLine insttbl
+                                   <|> parseSourceLineEmpty ) "" str of
           Left x  -> error (show x)
           Right x -> x
+
+parseSourceLineEmpty :: Parser [Operation]
+parseSourceLineEmpty = many space >> eof >> return []
 
 parseSourceLine :: [Instruction] -> Parser [Operation]
 parseSourceLine insttbl =
   do skipMany space
-     lbl <- many (parseSourceLbl <* skipMany space)
-     inst <- option [] (liftM (:[]) $ parseSourceInst insttbl)
+     content <- choice [ many1 (parseSourceLbl <* skipMany space)
+                       , liftM (:[]) $ parseSourceInst insttbl
+                       , parseSourceComment >> return []
+                       ]
      skipMany space
      optional parseSourceComment
-     return $ lbl ++ inst
+     return $ content
 
 parseLabelText :: Parser String
 parseLabelText = many1 $ (oneOf "._" <|> alphaNum)
@@ -290,13 +304,15 @@ parseSourceLbl = try $ do
 parseSourceInst :: [Instruction] -> Parser Operation
 parseSourceInst insttbl = try $ do
   instName <- many1 letter
-  let candArgList = map (\Inst {_instParams = p} -> p ) $
+  let candArgList = map (\Inst {_instParams = p} -> p) $
                     filterInstByName insttbl instName
-  skipMany space
-  args <- choice $ map parseSourceArgs candArgList
-  case findInstByNameArgs insttbl instName args of
-    Just inst -> return $ Action inst args
-    Nothing   -> error $ "instruction " ++ instName ++ " isn't found."
+  if null candArgList
+    then fail "instruction not found"
+    else do skipMany space
+            args <- choice $ map (try . parseSourceArgs) candArgList
+            case findInstByNameArgs insttbl instName args of
+              Just inst -> return $ Action inst args
+              Nothing -> error $ "instruction " ++ instName ++ " isn't found."
 
 parseSourceArgs :: [Parameter] -> Parser [Argument]
 parseSourceArgs [] = return []
@@ -339,11 +355,11 @@ parseSourceAddrOffset = do
   return $ AddrA $ LblOffset lbl ofs
 
 parseSourceByte :: Parser Argument
-parseSourceByte =  try $ liftM ByteA (parseHex <* oneOf "hH")
+parseSourceByte =  (try $ liftM ByteA (parseHex <* oneOf "hH"))
                <|> liftM ByteA parseDec
 
 parseSourceWord :: Parser Argument
-parseSourceWord =  try $ liftM WordA (parseHex2 <* oneOf "hH")
+parseSourceWord =  (try $ liftM WordA (parseHex2 <* oneOf "hH"))
                <|> liftM WordA parseDec
 
 parseSourceParm :: Int -> Parser Argument
@@ -372,6 +388,11 @@ assembleSource src = do
   return $ assemble ops
 
 pipeLine :: IO ()
+{-pipeLine = getContents >>= asm >>= putStrLn . show
+  where asm str = do
+          insttbl <- readInstList
+          return $ parseSource insttbl str
+-}
 pipeLine = getContents >>= assembleSource >>= BS.putStr
 
 
