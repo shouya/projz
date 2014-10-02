@@ -1,4 +1,5 @@
-module Assembler where
+module Assembler (assembleSource
+                 ) where
 
 {-
 
@@ -6,7 +7,7 @@ A 8080 CPU assembler.
 
 -}
 
-import Debug.Trace
+-- import Debug.Trace
 
 -- import Data.Char (toUpper, toLower)
 import Data.List (intercalate, find)
@@ -18,15 +19,15 @@ import qualified Data.Map as M
 
 import Text.Printf
 
-import Control.Monad (liftM)
-import Control.Applicative ((*>), (<*))
+import Control.Monad (liftM, liftM2)
+import Control.Applicative ((<*), (<$>), (<*>), pure)
 
 import Text.ParserCombinators.Parsec
 import qualified Data.ByteString as BS
 
 
 {- for debug use -}
-miatrace a = trace (show a) a
+-- miatrace a = trace (show a) a
 
 {- Instruction Specification List Parsing
 
@@ -250,7 +251,7 @@ matchParamArg (Parm p) (ParmA a) = p == a
 matchParamArg Addr (AddrA _)     = True
 matchParamArg Byte (ByteA _)     = True
 matchParamArg Word (WordA _)     = True
-
+matchParamArg _ _                = False
 
 matchParamsArgs :: [Parameter] -> [Argument] -> Bool
 matchParamsArgs [] [] = True
@@ -264,17 +265,17 @@ matchParamsArgs ps as
 findInstByNameArgs :: [Instruction] -> String -> [Argument] -> Maybe Instruction
 findInstByNameArgs i s a = find matchInst i
   where matchInst Inst {_instName = n, _instParams = p} =
-          (map toUpper s) == n && p `matchParamsArgs` a
+          map toUpper s == n && p `matchParamsArgs` a
 
 filterInstByName :: [Instruction] -> String -> [Instruction]
-filterInstByName i s = filter (\Inst {_instName = n} -> (map toUpper s) == n) i
+filterInstByName i s = filter (\Inst {_instName = n} -> map toUpper s == n) i
 
 
 
 parseSource :: [Instruction] -> String -> [Operation]
 parseSource insttbl str = concatMap parseline $ lines str
-  where parseline str = case parse (   parseSourceLine insttbl
-                                   <|> parseSourceLineEmpty ) "" str of
+  where parseline str' = case parse (   parseSourceLine insttbl
+                                    <|> parseSourceLineEmpty ) "" str' of
           Left x  -> error (show x)
           Right x -> x
 
@@ -290,15 +291,15 @@ parseSourceLine insttbl =
                        ]
      skipMany space
      optional parseSourceComment
-     return $ content
+     return content
 
 parseLabelText :: Parser String
-parseLabelText = many1 $ (oneOf "._" <|> alphaNum)
+parseLabelText = many1 (oneOf "._" <|> alphaNum)
 
 parseSourceLbl :: Parser Operation
 parseSourceLbl = try $ do
   text <- parseLabelText
-  char ':'
+  _ <- char ':'
   return $ Label text
 
 parseSourceInst :: [Instruction] -> Parser Operation
@@ -349,24 +350,24 @@ parseSourceAddrOffset :: Parser Argument
 parseSourceAddrOffset = do
   lbl <- parseLabelText
   skipMany space
-  char '+'
+  _ <- char '+'
   skipMany space
   ofs <- parseDec
   return $ AddrA $ LblOffset lbl ofs
 
 parseSourceByte :: Parser Argument
-parseSourceByte =  (try $ liftM ByteA (parseHex <* oneOf "hH"))
+parseSourceByte =  try (liftM ByteA (parseHex <* oneOf "hH"))
                <|> liftM ByteA parseDec
 
 parseSourceWord :: Parser Argument
-parseSourceWord =  (try $ liftM WordA (parseHex2 <* oneOf "hH"))
+parseSourceWord =  try (liftM WordA (parseHex2 <* oneOf "hH"))
                <|> liftM WordA parseDec
 
 parseSourceParm :: Int -> Parser Argument
 parseSourceParm = liftM (ParmA . read) . string . show
 
 parseSourceComment :: Parser ()
-parseSourceComment = char ';' >> manyTill (anyChar) eof >> return ()
+parseSourceComment = char ';' >> manyTill anyChar eof >> return ()
 
 parseHex :: Parser Word8
 parseHex = liftM (read . ("0x"++)) (count 2 hexDigit)
@@ -381,11 +382,12 @@ parseDec = liftM read $ many1 digit
 {- end of assembly file parsing -}
 
 
-assembleSource :: String -> IO (BS.ByteString)
-assembleSource src = do
-  insttbl <- readInstList
-  let ops = parseSource insttbl src
-  return $ assemble ops
+pureAssembleSource :: [Instruction] -> String -> BS.ByteString
+pureAssembleSource = (assemble .) . parseSource
+
+assembleSource :: String -> IO BS.ByteString
+assembleSource src = pureAssembleSource <$> readInstList <*> pure src
+
 
 pipeLine :: IO ()
 {-pipeLine = getContents >>= asm >>= putStrLn . show
