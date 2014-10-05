@@ -108,11 +108,8 @@ makeLenses ''State
 type RegisterName = String
 
 
--- Read memory
-refer :: RegisterName -> Lens' State Word
-refer "M" = do h <- registers . reg_h
-               l <- registers . reg_l
-               return $ ((fromEnum h `shiftL` 8) .&. fromEnum l :: Word)
+-- Read memory address from register
+refer :: RegisterName -> Lens' RegisterBundle Word
 
 
 byteToBin :: Byte -> (Bool, Bool, Bool, Bool,
@@ -148,17 +145,64 @@ wordToBin w = (w `testBit` 0,
                w `testBit` 15)
 
 requestRead :: Addr -> State -> State
-requestRead addr =
-  addr >>>
-  \(d0,d1,d2,d3,d4,d5,d6,d7,
-    d8,d9,da,db,dc,dd,de,df) ->
-  over registers $ (do set out_d0 d0
-                       set out_d1 d1)
+requestRead addr state =
+  let (a0,a1,a2,a3,a4,a5,a6,a7,
+       a8,a9,aa,ab,ac,ad,ae,af) = wordToBin addr
+  in registers & out_a0 .~ a0     & out_a1 .~ a1
+               & out_a2 .~ a2     & out_a3 .~ a3
+               & out_a4 .~ a4     & out_a5 .~ a5
+               & out_a6 .~ a6     & out_a7 .~ a7
+               & out_a8 .~ a8     & out_a9 .~ a9
+               & out_aa .~ aa     & out_ab .~ ab
+               & out_ac .~ ac     & out_ad .~ ad
+               & out_ae .~ ae     & out_af .~ af
+               & out_wr .~ True   & out_rd .~ False
 
 
 
-inst_move :: RegisterName -> RegisterName -> State -> State
-inst_move "A" "A" = over registers $ (view reg_a >>= set reg_a)
+registerLens :: RegisterName -> Lens' RegisterBundle Byte
+registerLens "A" = reg_a
+registerLens "B" = reg_b
+registerLens "C" = reg_c
+registerLens "D" = reg_d
+registerLens "E" = reg_e
+registerLens "H" = reg_h
+registerLens "L" = reg_l
+
+register16LensAux :: Lens' RegisterBundle Byte ->
+                     Lens' RegisterBundle Byte ->
+                     Lens' RegisterBundle Word
+register16LensAux hb lb = lens get set
+  where get :: RegisterBundle -> Word
+        get r = let h = view hb r
+                    l = view lb r
+                in ((fromEnum h `shiftL` 8) .&. fromEnum l)
+        set :: RegisterBundle -> Word -> RegisterBundle
+        set r w = r & hb .~ fromIntegral (w .&. 0xFFFF0000 `shiftR` 8)
+                    & lb .~ fromIntegral (w .&. 0xFFFF)
+
+
+register16Lens :: RegisterName -> Lens' RegisterBundle Word
+register16Lens "M" = register16Lens reg_h reg_l
+register16Lens "B" = register16Lens reg_b reg_c
+register16Lens "D" = register16Lens reg_d reg_e
+
+
+inst_move_reg :: RegisterName -> RegisterName -> State -> State
+inst_move_reg dst src = over registers $
+                        (view (registerLens src) >>= set (registerLens dst))
+
+inst_move_to_mem :: RegisterName -> State -> State
+inst_move_to_mem src = ^. registers . (registerLens src)
+
+
+step1 :: State -> State
+step1 st = let addr = st ^. registers . reg_pc
+               opcode = readMemory st addr
+               arg1 = readMemory st (addr + 1)
+               arg2 = readMemory st (addr + 2)
+               inst = opcodeToInst opcode arg1 arg2
+           in inst st
 
 
 --inst_ldax :: RegisterName -> RegisterName -> State
