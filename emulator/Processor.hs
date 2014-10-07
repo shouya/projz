@@ -197,22 +197,115 @@ inst_dad src st = st & regLens16 HL %~ (+foo)
 inst_ldax :: Reg16 -> State -> State
 inst_ldax srcm st = st & regLens A .~ (st ^. regMem srcm)
 
-
 inst_nop :: State -> State
 inst_nop = id
+
+inst_hlt :: State -> State
+inst_hlt = inst_hlt         -- stop working
+
+{-
+operations which affect the Carry bit are addition, subtraction,
+rotate, and logical operations  -- from Manual
+
+the Auxiliary Carry bit will be affected by all addition, subtraction,
+increment, decrement, and compare instructions
+
+TODO for add/subtract/logical operations
+-}
+
+addWord8 :: Word8 -> Word8 -> (Word8, Flag)
+addWord8 a b = (result, flag)
+  where result = a + b
+        proper_result = fromIntegral a + fromIntegral b
+        c  = proper_result > (maxBound :: Word8)
+        ac = (a .&. 0xFF) + (b .&. 0xFF) > 0xFF
+        z  = result == 0
+        s  = result `testBit` 7
+        p  = result `testBit` 0
+        flag = Flag { _flg_c  = c
+                    , _flg_ac = ac
+                    , _flg_z  = z
+                    , _flg_s  = s
+                    , _flg_p  = p
+                    }
+
+
+subtractWord8 :: Word8 -> Word8 -> (Word8, Flag)
+subtractWord8 a b = (result, flag)
+  where result = a - b
+        proper_result = fromIntegral a - fromIntegral b
+        c  = proper_result > (maxBound :: Word8)
+        ac = (a .&. 0xFF) - (b .&. 0xFF) > 0xFF
+        z  = result == 0
+        s  = result `testBit` 7
+        p  = result `testBit` 0
+        flag = Flag { _flg_c  = c
+                    , _flg_ac = ac
+                    , _flg_z  = z
+                    , _flg_s  = s
+                    , _flg_p  = p
+                    }
+
+setFlags :: Word8 -> Flag -> Flag
+setFlags rst flg =
+  flg & flg_z .~ (rst == 0)
+      & flg_s .~ rst `testBit` 7
+      & flg_p .~ rst `testBit` 0
+
+
+inst_add :: Reg8 -> State -> State
+inst_add reg st = let (result, flag) = addWord8 a r
+                  in st & regLens A .~ result
+                        & regFlag   .~ flag
+  where a = st ^. regLens A
+        r = st ^. regLens reg
+
+inst_addm :: State -> State
+inst_addm st = let (result, flag) = addWord8 a m
+               in st & regLens A .~ result
+                     & regFlag   .~ flag
+  where a = st ^. regLens A
+        m = st ^. regMem HL
+
+boolInt :: (Integral n) => Bool -> n
+boolInt = fromIntegral . fromEnum
+
+inst_adc :: Reg8 -> State -> State
+inst_adc reg st = let (rst , flg ) = addWord8 a r
+                      (rst', flg') = addWord8 rst (boolInt (flg ^. flg_c))
+                  in st & regLens A     .~ rst'
+                        & regFlag       .~ flg
+                        & regFlag.flg_c .~ (flg' ^. flg_c)
+  where a = st ^. regLens A
+        r = st ^. regLens reg
+
+inst_adcm :: Reg8 -> State -> State
+inst_adcm reg st = let (rst , flg ) = addWord8 a r
+                       (rst', flg') = addWord8 rst (boolInt (flg ^. flg_c))
+                   in st & regLens A     .~ rst'
+                         & regFlag       .~ flg
+                         & regFlag.flg_c .~ (flg' ^. flg_c)
+  where a = st ^. regLens A
+        r = st ^. regMem HL
+
+
+
+
+
 
 
 opcodeToInst :: Word8 -> Word8 -> Word8 -> State -> State
 opcodeToInst = undefined
 
 
+
 step1 :: State -> State
 step1 st = let addr = st ^. registers . reg_pc
-               (opcode, arg1, arg2) = fromJust $
-                                      do opcode'<- st ^? memLens addr
-                                         arg1'  <- st ^? memLens (addr + 1)
-                                         arg2'  <- st ^? memLens (addr + 1)
-                                         return (opcode',arg1',arg2')
+               (opcode, arg1, arg2) =
+                 fromJust $ do opcode'<- st ^? memLens addr
+                               arg1'  <- st ^? memLens (addr + 1)
+                               arg2'  <- st ^? memLens (addr + 2)
+                               return (opcode',arg1',arg2')
                inst   = opcodeToInst opcode arg1 arg2
            in inst st
 
