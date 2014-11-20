@@ -212,62 +212,52 @@ increment, decrement, and compare instructions
 TODO for add/subtract/logical operations
 -}
 
-addWord8 :: Word8 -> Word8 -> (Word8, Flag)
-addWord8 a b = (result, flag)
-  where result = a + b
-        proper_result = fromIntegral a + fromIntegral b
-        c  = proper_result > (maxBound :: Word8)
-        ac = (a .&. 0xFF) + (b .&. 0xFF) > 0xFF
-        z  = result == 0
-        s  = result `testBit` 7
-        p  = result `testBit` 0
-        flag = Flag { _flg_c  = c
-                    , _flg_ac = ac
-                    , _flg_z  = z
-                    , _flg_s  = s
-                    , _flg_p  = p
-                    }
+fillWord8 :: (Integral a) => a -> (Word8, Flag)
+fillWord8 n = (result, flags)
+  where result = fromIntegral n :: Word8
+        flags = Flag { _flg_c  = n > (maxBound :: Word8)
+                     , _flg_z  = result == 0
+                     , _flg_s  = result `testBit` 7
+                     , _flg_p  = result `testBit` 0
+                     , _flg_ac = (result .&. 0x0F) >= 0x0A
+                     }
 
+
+promote :: (Integral a, Integral b) => (a -> a) -> b -> a
+promote f = f . fromIntegral
+
+promote2 :: (Integral a, Integral b) => (a -> a -> a) -> b -> b -> a
+promote2 f = f `on` fromIntegral
+
+
+addWord8 :: Word8 -> Word8 -> (Word8, Flag)
+addWord8 a b = fillWord8 (promote2 (+) a b)
 
 subtractWord8 :: Word8 -> Word8 -> (Word8, Flag)
-subtractWord8 a b = (result, flag)
-  where result = a - b
-        proper_result = fromIntegral a - fromIntegral b
-        c  = proper_result > (maxBound :: Word8)
-        ac = (a .&. 0xFF) - (b .&. 0xFF) > 0xFF
-        z  = result == 0
-        s  = result `testBit` 7
-        p  = result `testBit` 0
-        flag = Flag { _flg_c  = c
-                    , _flg_ac = ac
-                    , _flg_z  = z
-                    , _flg_s  = s
-                    , _flg_p  = p
-                    }
+subtractWord8 a b = fillWord8 (promote2 subtract a b)
 
-setFlags :: Word8 -> Flag -> Flag
-setFlags rst flg =
-  flg & flg_z .~ (rst == 0)
-      & flg_s .~ rst `testBit` 7
-      & flg_p .~ rst `testBit` 0
+
+-- operation that modifies register A and Flags
+arith_inst :: Integral a => (State -> a) -> State -> State
+arith_inst f st = st & regFlag   .~ flag
+                     & regLens A .~ result
+  where (result, flag) = fillWord8 (f st)
+
+
+_inst_add :: Word8 -> State -> State
+_inst_add w = arith_inst (\st -> addWord8 (st ^. regLens A) w)
 
 
 inst_add :: Reg8 -> State -> State
-inst_add reg st = let (result, flag) = addWord8 a r
-                  in st & regLens A .~ result
-                        & regFlag   .~ flag
-  where a = st ^. regLens A
-        r = st ^. regLens reg
+inst_add r = _inst_add (st ^. regLens r)
 
 inst_addm :: State -> State
-inst_addm st = let (result, flag) = addWord8 a m
-               in st & regLens A .~ result
-                     & regFlag   .~ flag
-  where a = st ^. regLens A
-        m = st ^. regMem HL
+inst_addm = _inst_add (st ^. regMem HL)
+
 
 boolInt :: (Integral n) => Bool -> n
 boolInt = fromIntegral . fromEnum
+
 
 _inst_adc :: Word8 -> State -> State
 _inst_adc w st = let (rst , flg ) = addWord8 a w
@@ -276,6 +266,12 @@ _inst_adc w st = let (rst , flg ) = addWord8 a w
                        & regFlag       .~ flg
                        & regFlag.flg_c .~ (flg' ^. flg_c)
   where a = st ^. regLens A
+
+_inst_adc :: Word8 -> State -> State
+_inst_adc w = arith_inst foo
+  where foo st = let carry = fromIntegral $ boolInt $ st ^. regFlag.flg_c
+                     rega  = fromIntegral $ st ^. regLens A
+                 in rega + w + carry
 
 inst_adc :: Reg8 -> State -> State
 inst_adc reg st = _inst_adc (st ^. regLens reg) st
@@ -298,12 +294,10 @@ inst_subm st = _inst_sub (st ^. regMem HL) st
 
 
 _inst_sbb :: Word8 -> State -> State
-_inst_sbb w st = let (rst , flg ) = subtractWord8 a w
-                     (rst', flg') = subtractWord8 rst (boolInt $ flg ^. flg_c)
-                 in st & regLens A     .~ rst'
-                       & regFlag       .~ flg
-                       & regFlag.flg_c .~ (flg' ^. flg_c)
-  where a = st ^. regLens A
+_inst_sbb w = arith_inst foo
+  where foo st = let carry = fromIntegral $ boolInt $ st ^. regFlag.flg_c
+                     rega  = fromIntegral $ st ^. regLens A
+                 in rega - w - carry
 
 inst_sbb :: Reg8 -> State -> State
 inst_sbb r st = _inst_sbb (st ^. regLens r) st
@@ -312,7 +306,10 @@ inst_sbbm :: State -> State
 inst_sbbm st = _inst_sbb (st ^. regMem HL) st
 
 
-
+{-
+_inst_ana :: Word8 -> State -> State
+_inst_ana w st = let (rst, flg) =
+-}
 
 opcodeToInst :: Word8 -> Word8 -> Word8 -> State -> State
 opcodeToInst = undefined
