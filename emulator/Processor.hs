@@ -71,8 +71,7 @@ flagIso = iso to_ from_
                        , _flg_p  = w `testBit` 2
                        , _flg_c  = w `testBit` 1
                        }
-        pack = foldl (\acc b -> acc * 2 + boolToInt b) 0
-        boolToInt b = if b then 1 else 0
+        pack = foldl (\acc b -> acc * 2 + boolInt b) 0
 
 
 data Reg8 = A | B | C | D | E | F | H | L -- F: Flags
@@ -270,26 +269,47 @@ inst_addm st = let (result, flag) = addWord8 a m
 boolInt :: (Integral n) => Bool -> n
 boolInt = fromIntegral . fromEnum
 
+_inst_adc :: Word8 -> State -> State
+_inst_adc w st = let (rst , flg ) = addWord8 a w
+                     (rst', flg') = addWord8 rst (boolInt $ flg ^. flg_c)
+                 in st & regLens A     .~ rst'
+                       & regFlag       .~ flg
+                       & regFlag.flg_c .~ (flg' ^. flg_c)
+  where a = st ^. regLens A
+
 inst_adc :: Reg8 -> State -> State
-inst_adc reg st = let (rst , flg ) = addWord8 a r
-                      (rst', flg') = addWord8 rst (boolInt (flg ^. flg_c))
-                  in st & regLens A     .~ rst'
-                        & regFlag       .~ flg
-                        & regFlag.flg_c .~ (flg' ^. flg_c)
+inst_adc reg st = _inst_adc (st ^. regLens reg) st
+
+inst_adcm :: State -> State
+inst_adcm st = _inst_adc (st ^. regMem HL) st
+
+
+_inst_sub :: Word8 -> State -> State
+_inst_sub w st = let (rst, flg) = subtractWord8 a w
+                 in st & regLens A     .~ rst
+                       & regFlag       .~ flg
   where a = st ^. regLens A
-        r = st ^. regLens reg
 
-inst_adcm :: Reg8 -> State -> State
-inst_adcm reg st = let (rst , flg ) = addWord8 a r
-                       (rst', flg') = addWord8 rst (boolInt (flg ^. flg_c))
-                   in st & regLens A     .~ rst'
-                         & regFlag       .~ flg
-                         & regFlag.flg_c .~ (flg' ^. flg_c)
+inst_sub :: Reg8 -> State -> State
+inst_sub r st = _inst_sub (st ^. regLens r) st
+
+inst_subm :: State -> State
+inst_subm st = _inst_sub (st ^. regMem HL) st
+
+
+_inst_sbb :: Word8 -> State -> State
+_inst_sbb w st = let (rst , flg ) = subtractWord8 a w
+                     (rst', flg') = subtractWord8 rst (boolInt $ flg ^. flg_c)
+                 in st & regLens A     .~ rst'
+                       & regFlag       .~ flg
+                       & regFlag.flg_c .~ (flg' ^. flg_c)
   where a = st ^. regLens A
-        r = st ^. regMem HL
 
+inst_sbb :: Reg8 -> State -> State
+inst_sbb r st = _inst_sbb (st ^. regLens r) st
 
-
+inst_sbbm :: State -> State
+inst_sbbm st = _inst_sbb (st ^. regMem HL) st
 
 
 
