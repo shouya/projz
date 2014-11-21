@@ -9,6 +9,8 @@ import Data.Word (Word8, Word16)
 import Data.Array (Array)
 import Data.Bits ((.&.), (.|.), shiftL, shiftR, testBit)
 import Data.Maybe
+import Data.Function (on)
+
 
 -- See: http://en.wikipedia.org/wiki/Intel_8080
 -- for details of the specification
@@ -215,7 +217,7 @@ TODO for add/subtract/logical operations
 fillWord8 :: (Integral a) => a -> (Word8, Flag)
 fillWord8 n = (result, flags)
   where result = fromIntegral n :: Word8
-        flags = Flag { _flg_c  = n > (maxBound :: Word8)
+        flags = Flag { _flg_c  = n > (fromIntegral (maxBound :: Word8))
                      , _flg_z  = result == 0
                      , _flg_s  = result `testBit` 7
                      , _flg_p  = result `testBit` 0
@@ -230,11 +232,11 @@ promote2 :: (Integral a, Integral b) => (a -> a -> a) -> b -> b -> a
 promote2 f = f `on` fromIntegral
 
 
-addWord8 :: Word8 -> Word8 -> (Word8, Flag)
-addWord8 a b = fillWord8 (promote2 (+) a b)
+addWord8 :: Word8 -> Word8 -> Integer
+addWord8 a b = promote2 (+) a b
 
-subtractWord8 :: Word8 -> Word8 -> (Word8, Flag)
-subtractWord8 a b = fillWord8 (promote2 subtract a b)
+subtractWord8 :: Word8 -> Word8 -> Integer
+subtractWord8 a b = promote2 subtract a b
 
 
 -- operation that modifies register A and Flags
@@ -249,23 +251,15 @@ _inst_add w = arith_inst (\st -> addWord8 (st ^. regLens A) w)
 
 
 inst_add :: Reg8 -> State -> State
-inst_add r = _inst_add (st ^. regLens r)
+inst_add r st = _inst_add (st ^. regLens r) st
 
 inst_addm :: State -> State
-inst_addm = _inst_add (st ^. regMem HL)
+inst_addm st = _inst_add (st ^. regMem HL) st
 
 
 boolInt :: (Integral n) => Bool -> n
 boolInt = fromIntegral . fromEnum
 
-
-_inst_adc :: Word8 -> State -> State
-_inst_adc w st = let (rst , flg ) = addWord8 a w
-                     (rst', flg') = addWord8 rst (boolInt $ flg ^. flg_c)
-                 in st & regLens A     .~ rst'
-                       & regFlag       .~ flg
-                       & regFlag.flg_c .~ (flg' ^. flg_c)
-  where a = st ^. regLens A
 
 _inst_adc :: Word8 -> State -> State
 _inst_adc w = arith_inst foo
@@ -281,10 +275,7 @@ inst_adcm st = _inst_adc (st ^. regMem HL) st
 
 
 _inst_sub :: Word8 -> State -> State
-_inst_sub w st = let (rst, flg) = subtractWord8 a w
-                 in st & regLens A     .~ rst
-                       & regFlag       .~ flg
-  where a = st ^. regLens A
+_inst_sub w = arith_inst (\st -> subtractWord8 (st ^. regLens A) w)
 
 inst_sub :: Reg8 -> State -> State
 inst_sub r st = _inst_sub (st ^. regLens r) st
@@ -306,10 +297,18 @@ inst_sbbm :: State -> State
 inst_sbbm st = _inst_sbb (st ^. regMem HL) st
 
 
-{-
+
 _inst_ana :: Word8 -> State -> State
-_inst_ana w st = let (rst, flg) =
--}
+_inst_ana w = arith_inst (\st -> (st ^. regLens A) .&. w)
+
+inst_ana :: Reg8 -> State -> State
+inst_ana r st = _inst_ana (st ^. regLens r) st
+
+inst_anam :: State -> State
+inst_anam st = _inst_ana (st ^. regMem HL) st
+
+
+
 
 opcodeToInst :: Word8 -> Word8 -> Word8 -> State -> State
 opcodeToInst = undefined
