@@ -7,18 +7,13 @@ import Control.Lens.At
 
 import Data.Word (Word8, Word16)
 import Data.Array (Array)
-import Data.Bits ((.&.), (.|.), shiftL, shiftR, testBit)
+import Data.Bits ((.&.), (.|.), shiftL, shiftR, testBit, xor)
 import Data.Maybe
 import Data.Function (on)
 
 
 -- See: http://en.wikipedia.org/wiki/Intel_8080
 -- for details of the specification
-
-infixl 1 |>
-
-(|>) :: a -> (a -> b) -> b
-d |> f = f d
 
 -- 8080 has 5 flag bits, in composite into a register
 data Flag = Flag { _flg_s  :: Bool -- sign
@@ -110,11 +105,36 @@ rRegLens16 PSW = rRegLens16Comp reg_a (reg_flag . flagIso)
 rRegLens16 SP = reg_sp
 rRegLens16 PC = reg_pc
 
+rRegLens16H :: Reg16 -> Lens' RegisterBundle Word8
+rRegLens16H r = lens get_ set_
+  where get_ :: RegisterBundle -> Word8
+        get_ rb = fromIntegral $ (rb ^. rRegLens16 r) .&. 0xFF00
+        set_ :: RegisterBundle -> Word8 -> RegisterBundle
+        set_ rb w = rb & rRegLens16 r .~ val
+          where val = ((rb ^. rRegLens16 r) .&. 0x00FF) .|.
+                      (fromIntegral w `shiftL` 8)
+
+rRegLens16L :: Reg16 -> Lens' RegisterBundle Word8
+rRegLens16L r = lens get_ set_
+  where get_ :: RegisterBundle -> Word8
+        get_ rb = fromIntegral $ (rb ^. rRegLens16 r) .&. 0x00FF
+        set_ :: RegisterBundle -> Word8 -> RegisterBundle
+        set_ rb w = rb & rRegLens16 r .~ val
+          where val = ((rb ^. rRegLens16 r) .&. 0xFF00) .|. fromIntegral w
+
+
 regLens :: Reg8 -> Lens' State Word8
 regLens x = registers . rRegLens x
 
 regLens16 :: Reg16 -> Lens' State Word16
 regLens16 x = registers . rRegLens16 x
+
+regLens16H :: Reg16 -> Lens' State Word8
+regLens16H x = registers . rRegLens16H x
+
+regLens16L :: Reg16 -> Lens' State Word8
+regLens16L x = registers . rRegLens16L x
+
 
 memLens :: Addr -> Traversal' State Word8
 memLens addr = memory . ix addr
@@ -123,6 +143,11 @@ regMem :: Reg16 -> Lens' State Word8
 regMem x = lens get_ set_
   where get_ st   = fromJust $ st ^? memLens (st ^. regLens16 x)
         set_ st a = st &  memLens (st ^. regLens16 x) .~ a
+
+regMemOffset :: Reg16 -> Word16 -> Lens' State Word8
+regMemOffset x off = lens get_ set_
+  where get_ st   = fromJust $ st ^? memLens (st ^. regLens16 x + off)
+        set_ st a = st &  memLens (st ^. regLens16 x + off) .~ a
 
 
 regFlag :: Lens' State Flag
@@ -217,7 +242,7 @@ TODO for add/subtract/logical operations
 fillWord8 :: (Integral a) => a -> (Word8, Flag)
 fillWord8 n = (result, flags)
   where result = fromIntegral n :: Word8
-        flags = Flag { _flg_c  = n > (fromIntegral (maxBound :: Word8))
+        flags = Flag { _flg_c  = n > (fromIntegral (maxBound :: Word8)) || n < 0
                      , _flg_z  = result == 0
                      , _flg_s  = result `testBit` 7
                      , _flg_p  = result `testBit` 0
@@ -246,15 +271,25 @@ arith_inst f st = st & regFlag   .~ flag
   where (result, flag) = fillWord8 (f st)
 
 
+reg_inst :: (Word8 -> State -> State) -> Reg8 -> State -> State
+reg_inst f r st = f (st ^. regLens r) st
+
+mem_inst :: (Word8 -> State -> State) -> State -> State
+mem_inst f st = f (st ^. regMem HL) st
+
+imm_inst :: (Word8 -> State -> State) -> Word8 -> State -> State
+imm_inst = id
+
+
 _inst_add :: Word8 -> State -> State
 _inst_add w = arith_inst (\st -> addWord8 (st ^. regLens A) w)
 
 
 inst_add :: Reg8 -> State -> State
-inst_add r st = _inst_add (st ^. regLens r) st
+inst_add = reg_inst _inst_add
 
 inst_addm :: State -> State
-inst_addm st = _inst_add (st ^. regMem HL) st
+inst_addm = mem_inst _inst_add
 
 
 boolInt :: (Integral n) => Bool -> n
@@ -268,20 +303,20 @@ _inst_adc w = arith_inst foo
                  in rega + w + carry
 
 inst_adc :: Reg8 -> State -> State
-inst_adc reg st = _inst_adc (st ^. regLens reg) st
+inst_adc = reg_inst _inst_adc
 
 inst_adcm :: State -> State
-inst_adcm st = _inst_adc (st ^. regMem HL) st
+inst_adcm = mem_inst _inst_adc
 
 
 _inst_sub :: Word8 -> State -> State
 _inst_sub w = arith_inst (\st -> subtractWord8 (st ^. regLens A) w)
 
 inst_sub :: Reg8 -> State -> State
-inst_sub r st = _inst_sub (st ^. regLens r) st
+inst_sub = reg_inst _inst_sub
 
 inst_subm :: State -> State
-inst_subm st = _inst_sub (st ^. regMem HL) st
+inst_subm = mem_inst _inst_sub
 
 
 _inst_sbb :: Word8 -> State -> State
@@ -291,22 +326,58 @@ _inst_sbb w = arith_inst foo
                  in rega - w - carry
 
 inst_sbb :: Reg8 -> State -> State
-inst_sbb r st = _inst_sbb (st ^. regLens r) st
+inst_sbb = reg_inst _inst_sbb
 
 inst_sbbm :: State -> State
-inst_sbbm st = _inst_sbb (st ^. regMem HL) st
-
+inst_sbbm = mem_inst _inst_sbb
 
 
 _inst_ana :: Word8 -> State -> State
 _inst_ana w = arith_inst (\st -> (st ^. regLens A) .&. w)
 
 inst_ana :: Reg8 -> State -> State
-inst_ana r st = _inst_ana (st ^. regLens r) st
+inst_ana = reg_inst _inst_ana
 
 inst_anam :: State -> State
-inst_anam st = _inst_ana (st ^. regMem HL) st
+inst_anam = mem_inst _inst_ana
 
+
+_inst_xra :: Word8 -> State -> State
+_inst_xra w = arith_inst (\st -> (st ^. regLens A) `xor` w)
+
+
+inst_xra :: Reg8 -> State -> State
+inst_xra = reg_inst _inst_xra
+
+inst_xram :: State -> State
+inst_xram = mem_inst _inst_xra
+
+
+_inst_ora :: Word8 -> State -> State
+_inst_ora w = arith_inst (\st -> (st ^. regLens A) .|. w)
+
+inst_ora :: Reg8 -> State -> State
+inst_ora = reg_inst _inst_ora
+
+inst_oram :: State -> State
+inst_oram = mem_inst _inst_ora
+
+
+_inst_cmp :: Word8 -> State -> State
+_inst_cmp w st = st & regFlag .~ flag
+  where result    = subtractWord8 (st ^. regLens A) w
+        (_, flag) = fillWord8 result
+
+inst_cmp :: Reg8 -> State -> State
+inst_cmp = reg_inst _inst_cmp
+
+inst_cmpm :: State -> State
+inst_cmpm = mem_inst _inst_cmp
+
+inst_ret :: State -> State
+inst_ret st = st & regLens16L PC .~ (st ^. regMem SP)
+                 & regLens16H PC .~ (st ^. regMemOffset SP 1)
+                 & regLens16 SP %~ (+2)
 
 
 
