@@ -291,6 +291,8 @@ inst_add = reg_inst _inst_add
 inst_addm :: State -> State
 inst_addm = mem_inst _inst_add
 
+inst_addi :: Word8 -> State -> State
+inst_addi = imm_inst _inst_add
 
 boolInt :: (Integral n) => Bool -> n
 boolInt = fromIntegral . fromEnum
@@ -308,6 +310,9 @@ inst_adc = reg_inst _inst_adc
 inst_adcm :: State -> State
 inst_adcm = mem_inst _inst_adc
 
+inst_adci :: Word8 -> State -> State
+inst_adci = imm_inst _inst_adc
+
 
 _inst_sub :: Word8 -> State -> State
 _inst_sub w = arith_inst (\st -> subtractWord8 (st ^. regLens A) w)
@@ -317,6 +322,9 @@ inst_sub = reg_inst _inst_sub
 
 inst_subm :: State -> State
 inst_subm = mem_inst _inst_sub
+
+inst_sui :: Word8 -> State -> State
+inst_sui = imm_inst _inst_sub
 
 
 _inst_sbb :: Word8 -> State -> State
@@ -331,6 +339,9 @@ inst_sbb = reg_inst _inst_sbb
 inst_sbbm :: State -> State
 inst_sbbm = mem_inst _inst_sbb
 
+inst_sbi :: Word8 -> State -> State
+inst_sbi = imm_inst _inst_sbb
+
 
 _inst_ana :: Word8 -> State -> State
 _inst_ana w = arith_inst (\st -> (st ^. regLens A) .&. w)
@@ -341,16 +352,21 @@ inst_ana = reg_inst _inst_ana
 inst_anam :: State -> State
 inst_anam = mem_inst _inst_ana
 
+inst_ani :: Word8 -> State -> State
+inst_ani = imm_inst _inst_ana
+
 
 _inst_xra :: Word8 -> State -> State
 _inst_xra w = arith_inst (\st -> (st ^. regLens A) `xor` w)
-
 
 inst_xra :: Reg8 -> State -> State
 inst_xra = reg_inst _inst_xra
 
 inst_xram :: State -> State
 inst_xram = mem_inst _inst_xra
+
+inst_xri :: Word8 -> State -> State
+inst_xri = imm_inst _inst_xra
 
 
 _inst_ora :: Word8 -> State -> State
@@ -362,6 +378,8 @@ inst_ora = reg_inst _inst_ora
 inst_oram :: State -> State
 inst_oram = mem_inst _inst_ora
 
+inst_ori :: Word8 -> State -> State
+inst_ori = imm_inst _inst_ora
 
 _inst_cmp :: Word8 -> State -> State
 _inst_cmp w st = st & regFlag .~ flag
@@ -374,11 +392,116 @@ inst_cmp = reg_inst _inst_cmp
 inst_cmpm :: State -> State
 inst_cmpm = mem_inst _inst_cmp
 
+inst_cmi :: Word8 -> State -> State
+inst_cmi = imm_inst _inst_cmp
+
 inst_ret :: State -> State
 inst_ret st = st & regLens16L PC .~ (st ^. regMem SP)
                  & regLens16H PC .~ (st ^. regMemOffset SP 1)
                  & regLens16 SP %~ (+2)
 
+cond_ret_inst :: (State -> Bool) -> State -> State
+cond_ret_inst p st = if p st then inst_ret st else st
+
+cond_z, cond_c, cond_po, cond_m :: State -> Bool
+cond_z st  = st ^. regFlag.flg_z
+cond_c st  = st ^. regFlag.flg_c
+cond_po st = st ^. regFlag.flg_p
+cond_m  st = st ^. regFlag.flg_s
+
+
+cond_nz, cond_nc, cond_pe, cond_p :: State -> Bool
+cond_nz = not . cond_z
+cond_nc = not . cond_c
+cond_pe = not . cond_pe
+cond_p  = not . cond_m
+
+
+inst_rnz, inst_rz, inst_rc, inst_rnc :: State -> State
+inst_rpo, inst_rpe, inst_rp, inst_rm :: State -> State
+inst_rz  = cond_ret_inst cond_z
+inst_rc  = cond_ret_inst cond_c
+inst_rpo = cond_ret_inst cond_po
+inst_rm  = cond_ret_inst cond_m
+inst_rnz = cond_ret_inst cond_nz
+inst_rnc = cond_ret_inst cond_nc
+inst_rpe = cond_ret_inst cond_pe
+inst_rp  = cond_ret_inst cond_p
+
+
+inst_pop :: Reg16 -> State -> State
+inst_pop r st = st & regLens16L r .~ (st ^. regMem SP)
+                   & regLens16H r .~ (st ^. regMemOffset SP 1)
+                   & regLens16 SP %~ (+2)
+
+
+inst_jmp :: Word16 -> State -> State
+inst_jmp a st = st & regLens16 PC .~ a
+
+cond_jmp_inst :: (State -> Bool) -> Word16 -> State -> State
+cond_jmp_inst p a st = if p st then inst_jmp a st else st
+
+inst_jz, inst_jc, inst_jm, inst_jp     :: Word16 -> State -> State
+inst_jnz, inst_jnc, inst_jpo, inst_jpe :: Word16 -> State -> State
+inst_jz  = cond_jmp_inst cond_z
+inst_jc  = cond_jmp_inst cond_c
+inst_jm  = cond_jmp_inst cond_m
+inst_jp  = cond_jmp_inst cond_p
+inst_jnz = cond_jmp_inst cond_nz
+inst_jnc = cond_jmp_inst cond_nc
+inst_jpo = cond_jmp_inst cond_po
+inst_jpe = cond_jmp_inst cond_pe
+
+inst_call :: Word16 -> State -> State
+inst_call a st = st & regMemOffset SP (-1) .~ (fromIntegral (a .&. 0xFF00 `shiftR` 8))
+                    & regMemOffset SP (-2) .~ (fromIntegral $ a .&. 0x00FF)
+                    & regLens16 SP %~ (subtract 2)
+                    & regLens16 PC .~ a
+
+cond_call_inst :: (State -> Bool) -> Word16 -> State -> State
+cond_call_inst p a st = if p st then inst_call a st else st
+
+inst_cz, inst_cc, inst_cm, inst_cp     :: Word16 -> State -> State
+inst_cnz, inst_cnc, inst_cpo, inst_cpe :: Word16 -> State -> State
+inst_cz  = cond_call_inst cond_z
+inst_cc  = cond_call_inst cond_c
+inst_cm  = cond_call_inst cond_m
+inst_cp  = cond_call_inst cond_p
+inst_cnz = cond_call_inst cond_nz
+inst_cnc = cond_call_inst cond_nc
+inst_cpo = cond_call_inst cond_po
+inst_cpe = cond_call_inst cond_pe
+
+
+inst_push :: Reg16 -> State -> State
+inst_push r st = st & regMem SP .~ (st ^. regLens16L r)
+                    & regMemOffset SP 1 .~ (st ^. regLens16H r)
+                    & regLens16 SP %~ (subtract 2)
+
+
+inst_rst0, inst_rst1, inst_rst2, inst_rst3 :: State -> State
+inst_rst4, inst_rst5, inst_rst6, inst_rst7 :: State -> State
+inst_rst0 = inst_call 0x00
+inst_rst1 = inst_call 0x08
+inst_rst2 = inst_call 0x10
+inst_rst3 = inst_call 0x18
+inst_rst4 = inst_call 0x20
+inst_rst5 = inst_call 0x28
+inst_rst6 = inst_call 0x30
+inst_rst7 = inst_call 0x38
+
+
+{- instructions left to be implemented
+in
+out
+ei  (enable  interrupts)
+di  (disalbe interrupts)
+
+xthl   Exchanges HL with top of stack.
+sphl   Puts contents of HL into SP (stack pointer).
+pchl   Puts contents of HL into PC (program counter) [=JMP HL].
+xchg   Exchanges HL and DE.
+-}
 
 
 opcodeToInst :: Word8 -> Word8 -> Word8 -> State -> State
