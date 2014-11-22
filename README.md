@@ -26,3 +26,6 @@ a cheatsheet about the structure of the processor
 
 * [(pdf) 98-153B_Intel_8080_Microcomputer_Systems_Users_Manual_197509.pdf](http://bitsavers.trailing-edge.com/pdf/intel/MCS80/98-153B_Intel_8080_Microcomputer_Systems_Users_Manual_197509.pdf)
 a very useful reference manual about the processor
+
+* [Summary of 8080 Instructions](http://fms.komkon.org/comp/CPUs/8080.txt)
+a concise explanation of the instructions
