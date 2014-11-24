@@ -11,6 +11,8 @@ import Data.Bits ((.&.), (.|.), shiftL, shiftR, testBit, xor)
 import Data.Maybe
 import Data.Function (on)
 
+import System.IO
+
 
 -- See: http://en.wikipedia.org/wiki/Intel_8080
 -- for details of the specification
@@ -43,6 +45,9 @@ type Memory64K = Array Addr Word8
 
 data State = State { _registers :: RegisterBundle
                    , _memory    :: Memory64K
+                   , _interrupts_enabled :: Bool
+                   , _in_port   :: IO Handle
+                   , _out_port  :: IO Handle
                    }
 makeLenses ''State
 
@@ -490,6 +495,12 @@ inst_rst5 = inst_call 0x28
 inst_rst6 = inst_call 0x30
 inst_rst7 = inst_call 0x38
 
+
+inst_ei :: State -> State
+inst_ei st = st & interrupts_enabled .~ True
+
+inst_di :: State -> State
+inst_di st = st & interrupts_enabled .~ False
 
 {- instructions left to be implemented
 in
